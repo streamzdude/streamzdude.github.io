@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+	<title>Streamz</title>
+	<link rel="stylesheet" href="normalize.css"/>
+	<link rel="stylesheet" href="jquery-ui.css"/>
+	<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+
+<header>
+	<nav>
+		<a href="#" class="streamLink customizeLink" data-bind="click: toggleCustomize, css: {active: isCustomizing}" title="Customize">A</a>
+		<!-- ko foreach: visibleStreams -->
+			<a href="#" class="streamLink" data-bind="click: $root.toggleWindow, text: name, css: {active: window}"></a>
+		<!-- /ko -->
+	</nav>
+</header>
+
+<main>
+	<!-- ko foreach: windows -->
+		<div class="window" data-bind="window: $data">
+			<div class="title">
+				<span data-bind="text: stream.name"></span>
+				<a href="#" data-bind="visible: $root.showReload, click: $root.reloadWindow" class="ui-icon ui-icon-arrowrefresh-1-e reloadBtn" title="Reload"></a>
+			</div>			
+			<a href="#" data-bind="click: $root.closeWindow" class="ui-icon ui-icon-close closeBtn" title="Close"></a>
+			<div class="player"></div>
+			<div class="overlay" data-bind="visible: $root.showOverlay"></div>
+		</div>
+	<!-- /ko -->
+
+	<div class="customizeWindow" data-bind="visible: isCustomizing">
+		<div class="title">Customize</div>
+		<a href="#" data-bind="click: toggleCustomize" class="ui-icon ui-icon-close closeBtn" title="Close"></a>
+		<div class="content">
+			<!-- ko foreach: streams -->
+				<div>
+					<input type="checkbox" data-bind="checked: visible" />
+					<span data-bind="text: name" class="name"></span>
+					<a href="#" data-bind="click: $root.editStream">Edit</a>
+				</div>
+			<!-- /ko -->
+			
+			<hr />
+
+			<div>
+				<input type="checkbox" data-bind="checked: showReload" id="showReloadBtn" />
+				<label for="showReloadBtn">Show reload buttons</label>
+			</div>
+		</div>
+	</div>
+</main>
+
+<script src="http://jwpsrv.com/library/Av9ogCAyEeSQJyIAC0MJiQ.js"></script>
+<script src="jquery-2.1.1.min.js"></script>
+<script src="jquery-ui.min.js"></script>
+<script src="knockout-3.1.0.js"></script>
+<script src="script.js"></script>
+
+<!-- analytics snippet -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-53933709-1', 'auto');
+  ga('require', 'displayfeatures');
+  ga('send', 'pageview');
+</script>
+
+</body>
+</html>
