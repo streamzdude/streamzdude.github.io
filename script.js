@@ -444,7 +444,7 @@ var colors = ['#DE8D47', '#A92F41', '#E5DFC5', '#B48375', '#91C7A9', '#607625', 
 // https://github.com/k3oni/plugin.video.world.news.live/blob/master/channels.py
 
 $('#editStreamDlg').dialog({
-	zautoOpen: false,
+	autoOpen: false,
 	width: 400
 });
 
