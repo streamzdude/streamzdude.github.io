@@ -34,12 +34,15 @@
 	<div class="customizeWindow" data-bind="visible: isCustomizing">
 		<div class="title">Customize</div>
 		<a href="#" data-bind="click: toggleCustomize" class="ui-icon ui-icon-close closeBtn" title="Close"></a>
+		<a href="#" data-bind="click: addStream">Add Stream</a>
 		<div class="content">
 			<!-- ko foreach: streams -->
 				<div>
 					<input type="checkbox" data-bind="checked: visible" />
 					<span data-bind="text: name" class="name"></span>
 					<a href="#" data-bind="click: $root.editStream">Edit</a>
+					<a href="#" data-bind="click: $root.moveUp"   class="button ui-icon ui-icon-carat-1-n"> </a>
+					<a href="#" data-bind="click: $root.moveDown" class="button ui-icon ui-icon-carat-1-s"> </a>
 				</div>
 			<!-- /ko -->
 			
@@ -52,6 +55,23 @@
 		</div>
 	</div>
 </main>
+
+<div id="editStreamDlg" data-bind="with: editedStream" title="Add/Edit Stream">
+	<p>Name: <input type="text" data-bind="value: name"/></p>
+	<p>
+		Type:
+		<input type="radio" name="streamType" value="jwplayer" data-bind="checked: type" id="typeRad1"/><label for="typeRad1">jwplayer</label>
+		<input type="radio" name="streamType" value="iframe" data-bind="checked: type" id="typeRad2"/><label for="typeRad2">iframe</label>
+		<input type="radio" name="streamType" value="html" data-bind="checked: type" id="typeRad3"/><label for="typeRad3">html</label>
+	</p>
+	<p>
+		Source:
+		<textarea data-bind="value: src"></textarea>
+	</p>
+	<hr/>
+	<button class="ui-state-default" data-bind="click: ok">OK</button>
+	<button class="ui-state-default" data-bind="click: close">Cancel</button>
+</div>
 
 <script src="http://jwpsrv.com/library/Av9ogCAyEeSQJyIAC0MJiQ.js"></script>
 <script src="jquery-2.1.1.min.js"></script>

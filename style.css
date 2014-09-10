@@ -152,3 +152,14 @@ nav a.customizeLink.streamLink.active {
 	display: inline-block;
 	margin-left: 3px;
 }
+
+
+.customizeWindow .content .button {
+	display: inline-block;
+	width: 12px;
+}
+
+input[type=text], textarea {
+	color: black;
+	font-size: 0.8em;
+}

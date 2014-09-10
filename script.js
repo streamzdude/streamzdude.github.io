@@ -48,6 +48,30 @@ function StreamzVM(staticStreams) {
 	this.isCustomizing = ko.observable(false);
 	this.showReload = ko.observable(true);
 
+	this.editedStream = {
+		origStream: ko.observable(null),
+		name: ko.observable(''),
+		type: ko.observable('jwplayer'),
+		src: ko.observable(''),
+
+		open: function() { $('#editStreamDlg').dialog('open') },
+		close: function() { $('#editStreamDlg').dialog('close') },
+		ok: function() {
+			if (this.origStream()) {
+
+			}
+			else {
+				var stream = new Stream({
+					name: this.name(),
+					type: this.type(),
+					src: this.src()
+				});
+				self.streams.splice(0, 0, stream);
+			}
+			this.close();
+		}
+	};
+
 	this.bringToFront = function(window) {
 		var sortedWindows = self.windows().slice().sort(function(a,b) { return a.zIndex() - b.zIndex() });
 		if (~sortedWindows.indexOf(window))
@@ -56,8 +80,14 @@ function StreamzVM(staticStreams) {
 		sortedWindows.forEach(function(win, i) { win.zIndex(10 + i) });
 	};
 
-	this.editStream = function(stream) {
+	this.addStream = function() {
+		self.editedStream.origStream(null).name('');
+		self.editedStream.open();
+	}
 
+	this.editStream = function(stream) {
+		self.editedStream.origStream(stream).name(stream.name).type(stream.type).src(stream.src);
+		self.editedStream.open();
 	}
 
 	this.toggleWindow = function(stream) {
@@ -93,6 +123,22 @@ function StreamzVM(staticStreams) {
 
 	this.findStream = function(name) {
 		return self.streams().filter(function(stream) { return stream.name === name })[0];
+	}
+
+	this.moveUp = function(stream) {
+		var i = self.streams().indexOf(stream);
+		if (i > 0) {
+			self.streams.splice(i, 1);
+			self.streams.splice(i-1, 0, stream);
+		}
+	}
+	
+	this.moveDown = function(stream) {
+		var i = self.streams().indexOf(stream);
+		if (i < self.streams().length-1) {
+			self.streams.splice(i, 1);
+			self.streams.splice(i+1, 0, stream);
+		}
 	}
 
 	this.save = function() {
@@ -396,6 +442,11 @@ var streams = [
 var colors = ['#DE8D47', '#A92F41', '#E5DFC5', '#B48375', '#91C7A9', '#607625', '#707070', '#FFCC00', '#6600CC'];
 
 // https://github.com/k3oni/plugin.video.world.news.live/blob/master/channels.py
+
+$('#editStreamDlg').dialog({
+	zautoOpen: false,
+	width: 400
+});
 
 var vm = window.v = new StreamzVM(streams);
 
