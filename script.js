@@ -311,7 +311,8 @@ var streams = [
 	{
 		name: 'Ch 2',
 		type: 'iframe',
-		src: 'http://www.ustream.tv/embed/18458172?v=3&wmode=direct'
+		//src: 'http://www.ustream.tv/embed/18458172?v=3&wmode=direct'
+		src: 'http://www.ustream.tv/embed/19440296?v=3&wmode=direct'
 	},
 	{
 		name: 'Ch 10',
