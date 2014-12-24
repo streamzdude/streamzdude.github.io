@@ -209,7 +209,7 @@ function winJwplayer(elem, stream)
 
 function winIframe(elem, stream) 
 {
-	$('<iframe sandbox="allow-forms allow-scripts" webkitallowfullscreen="true" height="100%" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" />')
+	$('<iframe webkitallowfullscreen="true" height="100%" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" />')
 		.prop('src', stream.src)
 		.appendTo(elem);
 }
