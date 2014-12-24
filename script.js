@@ -209,7 +209,7 @@ function winJwplayer(elem, stream)
 
 function winIframe(elem, stream) 
 {
-	$('<iframe webkitallowfullscreen="true" height="100%" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" />')
+	$('<iframe sandbox="allow-forms allow-scripts" webkitallowfullscreen="true" height="100%" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" />')
 		.prop('src', stream.src)
 		.appendTo(elem);
 }
@@ -335,20 +335,23 @@ var streams = [
 	{
 		name: 'CNN USA',
 		type: 'iframe',
-		src: 'http://2ndrun.tv/CNN_Test.php?width=600&amp;height=370',
+//		src: 'http://2ndrun.tv/CNN_Test.php?width=600&amp;height=370',
+		src: 'http://prvservers.com/embed2.php?u=cnnn&amp;vw=600&amp;vh=370&amp;domain=usachannels.tv',
+//		src: 'http://www.ilive.to/embedplayer.php?width=640&height=480&channel=68419&autoplay=true'
 		width: 606,
 		height: 378
 	},
-	/*{
-		name: 'CNN USA 2',
-		type: 'iframe',
-		src: 'http://www.ilive.to/embedplayer.php?width=640&height=480&channel=68419&autoplay=true'
-	},*/
 	{
 		name: 'BBC',
 		type: 'jwplayer',
 		src: 'http://wpc.c1a9.edgecastcdn.net/hls-live/20C1A9/bbc_world/ls_satlink/b_828.m3u8',
 		bufferlength: 6
+	},
+	{
+		name: 'Sky News',
+		type: 'iframe',
+		src: 'http://www.youtube.com/embed/VYlQJbsVs48?rel=0',
+		visible: false
 	},
 	{
 		name: 'Aljazeera',
@@ -373,7 +376,7 @@ var streams = [
 		visible: false
 	},	
 	{
-		name: 'i24news',
+		name: 'i24',
 		type: 'html',
 		src: '<object width="100%" height="100%" type="application/x-shockwave-flash" data="http://c.brightcove.com/services/viewer/federated_f9?&amp;width=470&amp;height=350&amp;flashID=myExperience2552000984001&amp;bgcolor=%23000000&amp;playerID=2551661482001&amp;playerKey=AQ~~%2CAAACL1AyZ1k~%2ChYvoCrzvEtsjnBzkMXyn0g7qGNI0eDJy&amp;isVid=true&amp;isUI=true&amp;autoStart=true&amp;htmlFallback=true&amp;dynamicStreaming=true&amp;%40videoPlayer=2552000984001&amp;includeAPI=true&amp;templateLoadHandler=onTemplateLoad&amp;templateReadyHandler=brightcove%5B%22templateReadyHandlermyExperience2552000984001%22%5D&amp;debuggerID=&amp;originalTemplateReadyHandler=onTemplateReady&amp;startTime=1396304197501" id="myExperience2552000984001" class="BrightcoveExperience" seamlesstabbing="undefined"><param name="allowScriptAccess" value="always"><param name="allowFullScreen" value="true"><param name="seamlessTabbing" value="false"><param name="swliveconnect" value="true"><param name="wmode" value="window"><param name="quality" value="high"><param name="bgcolor" value="#000000"></object>',
 		visible: false
