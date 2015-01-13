@@ -337,10 +337,11 @@ var streams = [
 		name: 'CNN USA',
 		type: 'iframe',
 //		src: 'http://2ndrun.tv/CNN_Test.php?width=600&amp;height=370',
-		src: 'http://prvservers.com/embed2.php?u=cnnn&amp;vw=600&amp;vh=370&amp;domain=usachannels.tv',
+//		src: 'http://prvservers.com/embed2.php?u=cnnn&amp;vw=600&amp;vh=370&amp;domain=usachannels.tv',
 //		src: 'http://www.ilive.to/embedplayer.php?width=640&height=480&channel=68419&autoplay=true'
-		width: 606,
-		height: 378
+		src: 'http://embed.a1livetv.com/cnn-usa.php',
+		width: 664,
+		height: 468
 	},
 	{
 		name: 'BBC',
