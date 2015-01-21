@@ -313,7 +313,8 @@ var streams = [
 		type: 'iframe',
 		//src: 'http://www.ustream.tv/embed/18458172?v=3&wmode=direct'
 		//src: 'http://www.ustream.tv/embed/19440296?v=3&wmode=direct'
-		src: 'http://www.ustream.tv/embed/19595952?v=3&amp;wmode=direct'
+		//src: 'http://www.ustream.tv/embed/19595952?v=3&amp;wmode=direct'
+		src: 'http://www.ustream.tv/embed/19798681?v=3&amp;wmode=direct'
 	},
 	{
 		name: 'Ch 10',
