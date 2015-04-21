@@ -16,7 +16,7 @@ function Window(stream) {
 	startLeft = (startLeft + 50) % 400; startTop = (startTop + 50) % 400;
 	this.width = ko.observable(stream.width || 600);
 	this.height = ko.observable(stream.height || 345);
-	this.zIndex = ko.observable(0);	
+	this.zIndex = ko.observable(0);
 
 	this.save = function() {
 		return {
@@ -36,7 +36,7 @@ function Window(stream) {
 
 function StreamzVM(staticStreams) {
 	var self = this;
-	
+
 	this.windows = ko.observableArray();
 	this.streams = ko.observableArray( staticStreams.map(function(stream) { return new Stream(stream) }) );
 
@@ -132,7 +132,7 @@ function StreamzVM(staticStreams) {
 			self.streams.splice(i-1, 0, stream);
 		}
 	}
-	
+
 	this.moveDown = function(stream) {
 		var i = self.streams().indexOf(stream);
 		if (i < self.streams().length-1) {
@@ -155,11 +155,11 @@ function StreamzVM(staticStreams) {
 		};
 
 		localStorage["streamzData"] = JSON.stringify(data);
-	}	
+	}
 
 	this.load = function(data)
 	{
-		self.streams().forEach(function(stream) { 
+		self.streams().forEach(function(stream) {
 			stream.window(null);
 		});
 
@@ -190,7 +190,7 @@ var numPlayers = 0;
 //jwplayer.key='5XXb+w0txH2+cnkwOtAOWXU39zFQbZ6VT9mOA6R83tk=';
 jwplayer.key='cH3LS/5ip1cRnTAeAfHTSnww0iWLW/Vb62KpZK+nusI=';
 
-function winJwplayer(elem, stream) 
+function winJwplayer(elem, stream)
 {
 	var player = $('<div>').prop('id', 'player-' + (numPlayers++)).appendTo(elem);
 
@@ -207,7 +207,7 @@ function winJwplayer(elem, stream)
 	});
 }
 
-function winIframe(elem, stream) 
+function winIframe(elem, stream)
 {
 	$('<iframe webkitallowfullscreen="true" height="100%" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" />')
 		.prop('src', stream.src)
@@ -215,12 +215,12 @@ function winIframe(elem, stream)
 }
 
 ko.bindingHandlers.window = {
-	init: function(element, valueAccessor, allBindings, viewModel, bindingContext) 
+	init: function(element, valueAccessor, allBindings, viewModel, bindingContext)
 	{
 		var window = ko.unwrap( valueAccessor() );
 		var stream = window.stream;
 		var elem = $(element);
-		var playerDiv = elem.find('.player');		
+		var playerDiv = elem.find('.player');
 		var vm = bindingContext.$root;
 
 		elem.css({
@@ -238,7 +238,7 @@ ko.bindingHandlers.window = {
 		elem.draggable({
 			cancel: 'object',
 			start: function() {	vm.showOverlay(true) },
-			stop: function() { 
+			stop: function() {
 				vm.showOverlay(false);
 				var pos = elem.position();
 				window.left(pos.left).top(pos.top);
@@ -249,12 +249,12 @@ ko.bindingHandlers.window = {
 		elem.resizable({
 			handles: 'all',
 			start: function() {	vm.showOverlay(true) },
-			stop: function() { 
+			stop: function() {
 				vm.showOverlay(false);
 				var pos = elem.position();
 				window.left(pos.left).top(pos.top).width(elem.width()).height(elem.height());
 				vm.save();
-			}			
+			}
 		});
 
 		switch (stream.type) {
@@ -266,12 +266,12 @@ ko.bindingHandlers.window = {
 		ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
 			if (stream.type === 'jwplayer') {
 				try { jwplayer(playerDiv.children()[0]).remove(); } catch(e) {}
-			}			
+			}
 			elem.resizable('destroy').draggable('destroy');
 		});
 	},
 
-	update: function(element, valueAccessor) 
+	update: function(element, valueAccessor)
 	{
 		var window = ko.unwrap( valueAccessor() );
 		var elem = $(element);
@@ -288,10 +288,10 @@ var streams = [
 		type: 'iframe',
 		src: 'http://player.ooyala.com/iframe.html#ec=42Njdmazp8OPIKJRyChESz2RevNqe2aQ&pbid=ZTIxYmJjZDM2NWYzZDViZGRiOWJjYzc5&docUrl=http://streamzdude.github.io/streamz/'
 	},
-	{		
+	{
 		name: 'RT',
 		type: 'jwplayer',
-		src: 'rtmp://fml.3443.edgecastcdn.net/203443/en-stream',		
+		src: 'rtmp://fml.3443.edgecastcdn.net/203443/en-stream',
 		bufferlength: 20
 	},
 	{
@@ -320,8 +320,10 @@ var streams = [
 		name: 'Ch 10',
 //		type: 'iframe',
 //		src: 'http://10tv.nana10.co.il/Video/?VideoID=170771&TypeID=0&pid=48&sid=169&ShowBanner=1&VideoPosition=1&CategoryID=600079'
-		type: 'html',
+		type: 'html',		
 		src: '<object class="CTPlayer" type="application/x-shockwave-flash" data="http://hlslive.ch10.cloudvideoplatform.com/CTMLivePlayer.swf?0.9139183044899255" width="100%" height="100%" title="Ch10"><param name="quality" value="high"> <param name="bgcolor" value="#000000"><param name="allowScriptAccess" value="always"> <param name="wmode" value="direct"><param name="allowFullScreen" value="true"><param name="flashvars" value="AutoPlay=true&amp;dfpadunit=CDN_10TV&amp;PathToPlayer=http://hlslive.ch10.cloudvideoplatform.com/"></object>'
+//		type: 'jwplayer',
+//		src: 'http://nana10live-lh.akamaihd.net/i/ch10news_0@93049/master.m3u8'		
 	},
 	{
 		name: 'CNN',
@@ -377,7 +379,7 @@ var streams = [
 		src: 'rtmp://38.96.148.204:1935/liveedge/livestream_360p',
 		bufferlength: 5,
 		visible: false
-	},	
+	},
 	{
 		name: 'i24',
 		type: 'html',
@@ -454,10 +456,20 @@ var streams = [
 		visible: false
 	},
 	{
+		name:'Snooker1',
+		type:'html',
+		src:'<object type="application/x-shockwave-flash" data="http://www.llb.su/misc/uppod/uppod.swf" width="100%" height="100%" id="llbvideoplayer" style="visibility: visible;"><param name="bgcolor" value="#ffffff"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><param name="id" value="llbvideoplayer"><param name="flashvars" value="st=http://www.llb.su/misc/uppod/playerstyle.txt?v=010415&amp;file=rtmp://video.llb.su/live_[240,480,720]p/Snookerroom&amp;embedcode=<iframe width=&quot;720&quot; height=&quot;420&quot; src=&quot;//www.llb.su/embed/player.php?uid=Snookerroom&quot; frameborder=&quot;0&quot;></iframe>&amp;comment=<a target=&quot;_new&quot; href=&quot;http://www.llb.su/&quot;>LLB.su</a>&amp;infoloader=1&amp;infoloaderinterval=60&amp;infoloaderurl=http://video.llb.su/counts/Snookerroom.html&amp;infoloadermask={1}&amp;infoloaderaddurl=0"></object>'
+	},
+	{
+		name:'Snooker2',
+		type:'html',
+		src:'<object type="application/x-shockwave-flash" data="http://www.llb.su/misc/uppod/uppod.swf" width="100%" height="100%" id="llbvideoplayer" style="visibility: visible;"><param name="bgcolor" value="#ffffff"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><param name="id" value="llbvideoplayer"><param name="flashvars" value="st=http://www.llb.su/misc/uppod/playerstyle.txt?v=010415&amp;file=rtmp://video.llb.su/live_[240,480,720]p/Snookerroom2&amp;embedcode=<iframe width=&quot;720&quot; height=&quot;420&quot; src=&quot;//www.llb.su/embed/player.php?uid=Snookerroom2&quot; frameborder=&quot;0&quot;></iframe>&amp;comment=<a target=&quot;_new&quot; href=&quot;http://www.llb.su/&quot;>LLB.su</a>&amp;infoloader=1&amp;infoloaderinterval=60&amp;infoloaderurl=http://video.llb.su/counts/Snookerroom2.html&amp;infoloadermask={1}&amp;infoloaderaddurl=0"></object>'
+	},
+	{
 		name:'Cats',
 		type:'iframe',
 		src:'http://www.ustream.tv/embed/2298576?v=3&amp;wmode=direct'
-	},	
+	},
 	{
 		name: 'Chat',
 		type: 'html',
