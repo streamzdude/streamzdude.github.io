@@ -159,7 +159,8 @@ function StreamzVM(staticStreams) {
 			ver: ver,
 			windows: windows,
 			hiddenStreams: hiddenStreams,
-			showReload: self.showReload()
+			showReload: self.showReload(),
+			showLocks: self.showLocks()
 		};
 
 		localStorage["streamzData"] = JSON.stringify(data);
@@ -191,6 +192,8 @@ function StreamzVM(staticStreams) {
 
 		if (typeof data.showReload !== "undefined")
 			self.showReload(data.showReload);
+		if (typeof data.showLocks !== "undefined")
+			self.showLocks(data.showLocks);
 	}
 }
 
