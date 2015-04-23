@@ -23,7 +23,9 @@
 		<div class="window" data-bind="window: $data">
 			<div class="title">
 				<span data-bind="text: stream.name"></span>
-				<a href="#" data-bind="visible: $root.showReload, click: $root.reloadWindow" class="ui-icon ui-icon-arrowrefresh-1-e reloadBtn" title="Reload"></a>
+				<a href="#" data-bind="visible: $root.showReload, click: $root.reloadWindow" class="ui-icon ui-icon-arrowrefresh-1-e titleBtn" title="Reload" style="margin-left: 3px"></a>
+				<a href="#" data-bind="visible: $root.showLocks, click: toggleLock, 
+					css: {'ui-icon-locked': aspectRatioLocked, 'ui-icon-unlocked': !aspectRatioLocked()}" class="ui-icon titleBtn" title="Lock aspect ratio"></a>
 			</div>			
 			<a href="#" data-bind="click: $root.closeWindow" class="ui-icon ui-icon-close closeBtn" title="Close"></a>
 			<div class="player"></div>
@@ -51,6 +53,10 @@
 			<div>
 				<input type="checkbox" data-bind="checked: showReload" id="showReloadBtn" />
 				<label for="showReloadBtn">Show reload buttons</label>
+			</div>
+			<div>
+				<input type="checkbox" data-bind="checked: showLocks" id="showLocksBtn" />
+				<label for="showLocksBtn">Show aspect-ratio lock buttons</label>
 			</div>
 		</div>
 	</div>

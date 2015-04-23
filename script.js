@@ -17,6 +17,12 @@ function Window(stream) {
 	this.width = ko.observable(stream.width || 600);
 	this.height = ko.observable(stream.height || 345);
 	this.zIndex = ko.observable(0);
+	this.aspectRatioLocked = ko.observable(false);
+
+	this.toggleLock = function() {
+		self.aspectRatioLocked(!self.aspectRatioLocked());
+		vm.save();
+	};
 
 	this.save = function() {
 		return {
@@ -25,12 +31,13 @@ function Window(stream) {
 			top: self.top(),
 			width: self.width(),
 			height: self.height(),
-			zIndex: self.zIndex()
+			zIndex: self.zIndex(),
+			aspectRatioLocked: self.aspectRatioLocked()
 		};
 	}
 
 	this.load = function(data) {
-		self.left(data.left).top(data.top).width(data.width).height(data.height).zIndex(data.zIndex);
+		self.left(data.left).top(data.top).width(data.width).height(data.height).zIndex(data.zIndex).aspectRatioLocked(!!data.aspectRatioLocked);
 	}
 }
 
@@ -47,6 +54,7 @@ function StreamzVM(staticStreams) {
 	this.showOverlay = ko.observable(false);
 	this.isCustomizing = ko.observable(false);
 	this.showReload = ko.observable(true);
+	this.showLocks = ko.observable(true);
 
 	this.editedStream = {
 		origStream: ko.observable(null),
@@ -214,6 +222,15 @@ function winIframe(elem, stream)
 		.appendTo(elem);
 }
 
+// allow changing resizable's "aspectRatio" option after initialization (http://bugs.jqueryui.com/ticket/4186)
+var oldSetOption = $.ui.resizable.prototype._setOption;
+$.ui.resizable.prototype._setOption = function(key, value) {
+    oldSetOption.apply(this, arguments);
+    if (key === "aspectRatio") {
+        this._aspectRatio = !!value;
+    }
+};
+
 ko.bindingHandlers.window = {
 	init: function(element, valueAccessor, allBindings, viewModel, bindingContext)
 	{
@@ -248,6 +265,7 @@ ko.bindingHandlers.window = {
 
 		elem.resizable({
 			handles: 'all',
+			aspectRatio: window.aspectRatioLocked(),
 			start: function() {	vm.showOverlay(true) },
 			stop: function() {
 				vm.showOverlay(false);
@@ -278,6 +296,7 @@ ko.bindingHandlers.window = {
 		elem.css({
 			'z-index': window.zIndex()
 		});
+		elem.resizable('option', 'aspectRatio', window.aspectRatioLocked());
 	}
 }
 
