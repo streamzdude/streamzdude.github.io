@@ -5,6 +5,9 @@ function Stream(stream) {
 	$.extend(this, stream);
 	this.visible = ko.observable(stream.visible !== false);
 	this.window = ko.observable();
+	this.name = ko.observable(stream.name);
+	this.type = ko.observable(stream.type);
+	this.src = ko.observable(stream.src);
 }
 
 function Window(stream) {
@@ -26,7 +29,7 @@ function Window(stream) {
 
 	this.save = function() {
 		return {
-			streamName: self.stream.name,
+			streamName: self.stream.name(),
 			left: self.left(),
 			top: self.top(),
 			width: self.width(),
@@ -66,7 +69,20 @@ function StreamzVM(staticStreams) {
 		close: function() { $('#editStreamDlg').dialog('close') },
 		ok: function() {
 			if (this.origStream()) {
+				var stream = this.origStream();
+				var window = stream.window();
+				var winRemoved = false;
 
+				if (window && (this.type() !== stream.type() || this.src() !== stream.src())) {
+					self.windows.remove(window);
+					winRemoved = true;
+				}
+
+				stream.name(this.name()).type(this.type()).src(this.src());
+
+				if (winRemoved) {
+					self.windows.push(window);
+				}
 			}
 			else {
 				var stream = new Stream({
@@ -94,7 +110,7 @@ function StreamzVM(staticStreams) {
 	}
 
 	this.editStream = function(stream) {
-		self.editedStream.origStream(stream).name(stream.name).type(stream.type).src(stream.src);
+		self.editedStream.origStream(stream).name(stream.name()).type(stream.type()).src(stream.src());
 		self.editedStream.open();
 	}
 
@@ -130,7 +146,7 @@ function StreamzVM(staticStreams) {
 	}
 
 	this.findStream = function(name) {
-		return self.streams().filter(function(stream) { return stream.name === name })[0];
+		return self.streams().filter(function(stream) { return stream.name() === name })[0];
 	}
 
 	this.moveUp = function(stream) {
@@ -153,7 +169,7 @@ function StreamzVM(staticStreams) {
 		var windows = self.windows().map(function(window) { return window.save() });
 		var hiddenStreams = self.streams()
 				.filter(function(stream) { return !stream.visible() })
-				.map(function(stream) { return stream.name });
+				.map(function(stream) { return stream.name() });
 
 		var data = {
 			ver: ver,
@@ -206,8 +222,8 @@ function winJwplayer(elem, stream)
 	var player = $('<div>').prop('id', 'player-' + (numPlayers++)).appendTo(elem);
 
 	jwplayer(player[0]).setup({
-	    file: stream.src,
-	    title: stream.name || 'Untitled',
+	    file: stream.src(),
+	    title: stream.name() || 'Untitled',
 	    image: stream.image === false ? undefined : 'bomb.png',
 	    width: '100%',
 	    aspectratio: '16:9',
@@ -221,7 +237,7 @@ function winJwplayer(elem, stream)
 function winIframe(elem, stream)
 {
 	$('<iframe webkitallowfullscreen="true" height="100%" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" />')
-		.prop('src', stream.src)
+		.prop('src', stream.src())
 		.appendTo(elem);
 }
 
@@ -278,14 +294,14 @@ ko.bindingHandlers.window = {
 			}
 		});
 
-		switch (stream.type) {
+		switch (stream.type()) {
 			case 'jwplayer': winJwplayer(playerDiv, stream); break;
 			case 'iframe': winIframe(playerDiv, stream); break;
-			case 'html': playerDiv.append( stream.src ); break;
+			case 'html': playerDiv.append( stream.src() ); break;
 		}
 
 		ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-			if (stream.type === 'jwplayer') {
+			if (stream.type() === 'jwplayer') {
 				try { jwplayer(playerDiv.children()[0]).remove(); } catch(e) {}
 			}
 			elem.resizable('destroy').draggable('destroy');
