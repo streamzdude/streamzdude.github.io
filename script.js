@@ -533,6 +533,11 @@ $('#editStreamDlg').dialog({
 	width: 400
 });
 
+
+Parse.initialize("OdcWlux6hErIUqIztapMriACQCyN745nXvl5jgOi", "BGqTQ7RJOZDJHo3YVxytQWU9Z5eMPVNL5LjATnl6");
+Parse.Analytics.track('pageLoad', {hasData: String(!!userData)});
+
+
 var vm = window.v = new StreamzVM(streams);
 
 var userData = localStorage["streamzData"];
@@ -543,9 +548,6 @@ if (userData) {
 	else
 		localStorage.removeItem("streamzData");
 }
-
-Parse.initialize("OdcWlux6hErIUqIztapMriACQCyN745nXvl5jgOi", "BGqTQ7RJOZDJHo3YVxytQWU9Z5eMPVNL5LjATnl6");
-Parse.Analytics.track('pageLoad', {hasData: String(!!userData)});
 
 ko.applyBindings(vm);
 
