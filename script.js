@@ -117,9 +117,11 @@ function StreamzVM(staticStreams) {
 	this.toggleWindow = function(stream) {
 		var window = self.windows().filter(function(window) { return window.stream === stream })[0];
 		if (window) {
+			Parse.Analytics.track('closeWindow', {stream: stream.name()});
 			self.closeWindow(window);
 		}
 		else {
+			Parse.Analytics.track('openWindow', {stream: stream.name()});
 			window = new Window(stream);
 			self.bringToFront(window);
 			self.windows.push(window);
@@ -536,4 +538,9 @@ if (userData) {
 		localStorage.removeItem("streamzData");
 }
 
+Parse.initialize("OdcWlux6hErIUqIztapMriACQCyN745nXvl5jgOi", "BGqTQ7RJOZDJHo3YVxytQWU9Z5eMPVNL5LjATnl6");
+Parse.Analytics.track('pageLoad', {hasData: String(!!userData)});
+
 ko.applyBindings(vm);
+
+
