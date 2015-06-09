@@ -147,10 +147,11 @@ function StreamzVM(staticStreams) {
 	}
 
 	this.toggleCustomize = function() {
-		Parse.Analytics.track('toggleCustomize');
 		self.isCustomizing(!self.isCustomizing());
 		if (!self.isCustomizing())
 			self.save();
+		else
+			Parse.Analytics.track('toggleCustomize');
 	}
 
 	this.findStream = function(name) {
