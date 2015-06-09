@@ -13,6 +13,9 @@ function Stream(stream) {
 function Window(stream) {
 	var self = this;
 	stream.window(this);
+
+	Parse.Analytics.track('openWindow', {stream: stream.name()});
+
 	this.stream = stream;
 	this.left = ko.observable(startLeft);
 	this.top = ko.observable(startTop);
@@ -73,6 +76,8 @@ function StreamzVM(staticStreams) {
 				var window = stream.window();
 				var winRemoved = false;
 
+				Parse.Analytics.track('editStream', {stream: this.name(), type: this.type()});
+
 				if (window && (this.type() !== stream.type() || this.src() !== stream.src())) {
 					self.windows.remove(window);
 					winRemoved = true;
@@ -85,6 +90,7 @@ function StreamzVM(staticStreams) {
 				}
 			}
 			else {
+				Parse.Analytics.track('addStream', {stream: this.name(), type: this.type()});
 				var stream = new Stream({
 					name: this.name(),
 					type: this.type(),
@@ -117,11 +123,9 @@ function StreamzVM(staticStreams) {
 	this.toggleWindow = function(stream) {
 		var window = self.windows().filter(function(window) { return window.stream === stream })[0];
 		if (window) {
-			Parse.Analytics.track('closeWindow', {stream: stream.name()});
 			self.closeWindow(window);
 		}
 		else {
-			Parse.Analytics.track('openWindow', {stream: stream.name()});
 			window = new Window(stream);
 			self.bringToFront(window);
 			self.windows.push(window);
@@ -131,6 +135,7 @@ function StreamzVM(staticStreams) {
 	}
 
 	this.closeWindow = function(window) {
+		Parse.Analytics.track('closeWindow', {stream: window.stream.name()});
 		window.stream.window(null);
 		self.windows.remove(window);
 		self.save();
@@ -142,6 +147,7 @@ function StreamzVM(staticStreams) {
 	}
 
 	this.toggleCustomize = function() {
+		Parse.Analytics.track('toggleCustomize');
 		self.isCustomizing(!self.isCustomizing());
 		if (!self.isCustomizing())
 			self.save();
