@@ -14,7 +14,7 @@ function Window(stream) {
 	var self = this;
 	stream.window(this);
 
-	Parse.Analytics.track('openWindow', {stream: stream.name()});
+	firebase.child('openWindow').push(stream.name);
 
 	this.stream = stream;
 	this.left = ko.observable(startLeft);
@@ -76,7 +76,6 @@ function StreamzVM(staticStreams) {
 				var window = stream.window();
 				var winRemoved = false;
 
-				Parse.Analytics.track('editStream', {stream: this.name(), type: this.type()});
 
 				if (window && (this.type() !== stream.type() || this.src() !== stream.src())) {
 					self.windows.remove(window);
@@ -90,7 +89,7 @@ function StreamzVM(staticStreams) {
 				}
 			}
 			else {
-				Parse.Analytics.track('addStream', {stream: this.name(), type: this.type()});
+				firebase.child('addStream').push({stream: this.name(), type: this.type()});
 				var stream = new Stream({
 					name: this.name(),
 					type: this.type(),
@@ -135,7 +134,6 @@ function StreamzVM(staticStreams) {
 	}
 
 	this.closeWindow = function(window) {
-		Parse.Analytics.track('closeWindow', {stream: window.stream.name()});
 		window.stream.window(null);
 		self.windows.remove(window);
 		self.save();
@@ -151,7 +149,7 @@ function StreamzVM(staticStreams) {
 		if (!self.isCustomizing())
 			self.save();
 		else
-			Parse.Analytics.track('toggleCustomize');
+			firebase.child('toggleCustomize').transaction(function(val) { return (val||0)+1 });
 	}
 
 	this.findStream = function(name) {
@@ -534,9 +532,20 @@ $('#editStreamDlg').dialog({
 	width: 400
 });
 
+var firebase = new Firebase("https://streamz.firebaseio.com/");
+var ipData = {};
 
-Parse.initialize("OdcWlux6hErIUqIztapMriACQCyN745nXvl5jgOi", "BGqTQ7RJOZDJHo3YVxytQWU9Z5eMPVNL5LjATnl6");
-Parse.Analytics.track('pageLoad', {hasData: String(!!userData)});
+$.getJSON('http://ip-api.com/json').done(function(data) {
+	data.timestamp = Date.now();
+	data.date = new Date().toString();
+	ipData = data;
+	firebase.child('hits').push(data);
+});
+
+
+
+//Parse.initialize("OdcWlux6hErIUqIztapMriACQCyN745nXvl5jgOi", "BGqTQ7RJOZDJHo3YVxytQWU9Z5eMPVNL5LjATnl6");
+//Parse.Analytics.track('pageLoad', {hasData: String(!!userData)});
 
 
 var vm = window.v = new StreamzVM(streams);
