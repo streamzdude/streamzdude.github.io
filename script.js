@@ -14,7 +14,7 @@ function Window(stream) {
 	var self = this;
 	stream.window(this);
 
-	firebase.child('openWindow').push(stream.name);
+	firebase.child('openWindow').push(stream.name());
 
 	this.stream = stream;
 	this.left = ko.observable(startLeft);
