@@ -14,7 +14,7 @@ function Window(stream) {
 	var self = this;
 	stream.window(this);
 
-	firebase.child('openWindow').push(stream.name());
+	analytics('openWindow', stream.name());
 
 	this.stream = stream;
 	this.left = ko.observable(startLeft);
@@ -89,7 +89,7 @@ function StreamzVM(staticStreams) {
 				}
 			}
 			else {
-				firebase.child('addStream').push({stream: this.name(), type: this.type()});
+				analytics('addStream', {stream: this.name(), type: this.type(), src: this.src()});
 				var stream = new Stream({
 					name: this.name(),
 					type: this.type(),
@@ -149,8 +149,9 @@ function StreamzVM(staticStreams) {
 		if (!self.isCustomizing())
 			self.save();
 		else
-			firebase.child('toggleCustomize').transaction(function(val) { return (val||0)+1 });
+			analytics('toggleCustomize', function(val) { return (val||0)+1 });
 	}
+
 
 	this.findStream = function(name) {
 		return self.streams().filter(function(stream) { return stream.name() === name })[0];
@@ -523,30 +524,41 @@ var streams = [
 ];
 
 
-var colors = ['#DE8D47', '#A92F41', '#E5DFC5', '#B48375', '#91C7A9', '#607625', '#707070', '#FFCC00', '#6600CC'];
-
-// https://github.com/k3oni/plugin.video.world.news.live/blob/master/channels.py
-
 $('#editStreamDlg').dialog({
 	autoOpen: false,
 	width: 400
 });
 
-var firebase = new Firebase("https://streamz.firebaseio.com/");
+
+function initAnalytics() {
+	firebase = new Firebase("https://streamz.firebaseio.com/");
+	analytics('hits', function(i){ return (i||0)+1 });
+	//Parse.initialize("OdcWlux6hErIUqIztapMriACQCyN745nXvl5jgOi", "BGqTQ7RJOZDJHo3YVxytQWU9Z5eMPVNL5LjATnl6");
+}
+
+function analytics(key, data) {
+	if (isShok)
+		return;
+
+	if (typeof data === 'function')
+		firebase.child(key).transaction(data);
+	else
+		firebase.child(key).push(data);
+}
+
+var firebase;
+var isShok = localStorage['shoky-pc'] === 'true';
 var ipData = {};
+initAnalytics();
 
-$.getJSON('http://ip-api.com/json').done(function(data) {
-	data.timestamp = Date.now();
-	data.date = new Date().toString();
-	ipData = data;
-	firebase.child('hits').push(data);
-});
-
-
-
-//Parse.initialize("OdcWlux6hErIUqIztapMriACQCyN745nXvl5jgOi", "BGqTQ7RJOZDJHo3YVxytQWU9Z5eMPVNL5LjATnl6");
-//Parse.Analytics.track('pageLoad', {hasData: String(!!userData)});
-
+if (!isShok) {
+	$.getJSON('http://ip-api.com/json').done(function(data) {
+		data.timestamp = Date.now();
+		data.date = new Date().toString();
+		ipData = data;
+		analytics('ipData', data);
+	});
+}
 
 var vm = window.v = new StreamzVM(streams);
 
