@@ -533,30 +533,38 @@ $('#editStreamDlg').dialog({
 function initAnalytics() {
 	firebase = new Firebase("https://streamz.firebaseio.com/");
 	analytics('hits', function(i){ return (i||0)+1 });
-	//Parse.initialize("OdcWlux6hErIUqIztapMriACQCyN745nXvl5jgOi", "BGqTQ7RJOZDJHo3YVxytQWU9Z5eMPVNL5LjATnl6");
+	if (!isShok) {
+		var session = analytics('sessions', {started: analyticsTimestamp});
+		session.onDisconnect().update({ended: analyticsTimestamp});
+		return session;
+	}
 }
 
 function analytics(key, data) {
 	if (isShok)
-		return;
+		return false;
+
+	var root = analyticsSession || firebase;
 
 	if (typeof data === 'function')
-		firebase.child(key).transaction(data);
+		return root.child(key).transaction(data);
 	else
-		firebase.child(key).push(data);
+		return root.child(key).push(data);
 }
 
+
 var firebase;
+var analyticsTimestamp = Firebase.ServerValue.TIMESTAMP;
 var isShok = localStorage['shoky-pc'] === 'true';
 var ipData = {};
-initAnalytics();
+var analyticsSession = initAnalytics();
 
 if (!isShok) {
 	$.getJSON('http://ip-api.com/json').done(function(data) {
-		data.timestamp = Date.now();
-		data.date = new Date().toString();
+		data.browserDate = new Date().toString();
+		data.timestamp = analyticsTimestamp;
 		ipData = data;
-		analytics('ipData', data);
+		analyticsSession.child('ipData').set(data);
 	});
 }
 
