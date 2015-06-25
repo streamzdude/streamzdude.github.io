@@ -14,7 +14,7 @@ function Window(stream) {
 	var self = this;
 	stream.window(this);
 
-	analytics('openWindow', stream.name());
+	analyticsSession.child('openWindow').push(stream.name());
 
 	this.stream = stream;
 	this.left = ko.observable(startLeft);
@@ -89,7 +89,7 @@ function StreamzVM(staticStreams) {
 				}
 			}
 			else {
-				analytics('addStream', {stream: this.name(), type: this.type(), src: this.src()});
+				analyticsSession.child('addStream').push({stream: this.name(), type: this.type(), src: this.src()});
 				var stream = new Stream({
 					name: this.name(),
 					type: this.type(),
@@ -149,7 +149,7 @@ function StreamzVM(staticStreams) {
 		if (!self.isCustomizing())
 			self.save();
 		else
-			analytics('toggleCustomize', function(val) { return (val||0)+1 });
+			analyticsSession.child('toggleCustomize').transaction(function(val) { return (val||0)+1 });
 	}
 
 
@@ -529,38 +529,31 @@ $('#editStreamDlg').dialog({
 
 function initAnalytics() {
 	firebase = new Firebase("https://streamz.firebaseio.com/");
-	analytics('hits', function(i){ return (i||0)+1 });
-	if (!isShok) {
-		var session = analytics('sessions', {started: analyticsTimestamp});
+	firebase.child('hits').transaction(function(i){ return (i||0)+1 });
+	if (isShok) {
+		var o = {child: f, transaction: f, update: f, push: f};
+		function f() { return o }
+	}
+	else {
+		var session = firebase.child('sessions').push();
+		session.update({
+				browserDate: new Date().toString(),
+				started: analyticsTimestamp
+		});
 		session.onDisconnect().update({ended: analyticsTimestamp});
 
 		$.getJSON('http://ip-api.com/json').done(function(data) {
-			data.browserDate = new Date().toString();
-			data.timestamp = analyticsTimestamp;
 			ipData = data;
-			analyticsSession.child('ipData').set(data);
+			session.update({ipData:data, ip: data.query});
 		}).fail(function() {
 			$.get('http://icanhazip.com').done(function(data) {
-				analyticsSession.child('ip').set(data.trim());
+				session.update({ip: data.trim()});
 			});
 		});
 
 		return session;
 	}
 }
-
-function analytics(key, data) {
-	if (isShok)
-		return false;
-
-	var root = analyticsSession || firebase;
-
-	if (typeof data === 'function')
-		return root.child(key).transaction(data);
-	else
-		return root.child(key).push(data);
-}
-
 
 var firebase;
 var analyticsTimestamp = Firebase.ServerValue.TIMESTAMP;
