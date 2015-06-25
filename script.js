@@ -541,7 +541,7 @@ function initAnalytics() {
 			analyticsSession.child('ipData').set(data);
 		}).fail(function() {
 			$.get('http://icanhazip.com').done(function(data) {
-				analyticsSession.child('ip').set(data);
+				analyticsSession.child('ip').set(data.trim());
 			});
 		});
 
