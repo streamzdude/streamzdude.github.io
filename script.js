@@ -533,6 +533,18 @@ function initAnalytics() {
 	if (!isShok) {
 		var session = analytics('sessions', {started: analyticsTimestamp});
 		session.onDisconnect().update({ended: analyticsTimestamp});
+
+		$.getJSON('http://ip-api.com/json').done(function(data) {
+			data.browserDate = new Date().toString();
+			data.timestamp = analyticsTimestamp;
+			ipData = data;
+			analyticsSession.child('ipData').set(data);
+		}).fail(function() {
+			$.get('http://icanhazip.com').done(function(data) {
+				analyticsSession.child('ip').set(data);
+			});
+		});
+
 		return session;
 	}
 }
@@ -556,14 +568,6 @@ var isShok = localStorage['shoky-pc'] === 'true';
 var ipData = {};
 var analyticsSession = initAnalytics();
 
-if (!isShok) {
-	$.getJSON('http://ip-api.com/json').done(function(data) {
-		data.browserDate = new Date().toString();
-		data.timestamp = analyticsTimestamp;
-		ipData = data;
-		analyticsSession.child('ipData').set(data);
-	});
-}
 
 var vm = window.v = new StreamzVM(streams);
 
