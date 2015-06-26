@@ -533,6 +533,7 @@ function initAnalytics() {
 	if (isShok) {
 		var o = {child: f, transaction: f, update: f, push: f};
 		function f() { return o }
+		return o;
 	}
 	else {
 		var session = firebase.child('sessions').push();
