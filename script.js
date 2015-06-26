@@ -387,7 +387,8 @@ var streams = [
 //		src: 'http://www.ilive.to/embedplayer.php?width=640&height=480&channel=68419&autoplay=true'
 		src: 'http://embed.a1livetv.com/cnn-usa.php',
 		width: 664,
-		height: 468
+		height: 468,
+		visible: false
 	},
 	{
 		name: 'BBC',
@@ -398,13 +399,13 @@ var streams = [
 	{
 		name: 'Sky News',
 		type: 'iframe',
-		src: 'http://www.youtube.com/embed/VYlQJbsVs48?rel=0',
-		visible: false
+		src: 'https://www.youtube.com/embed/mqafQVNkyN4?rel=0'
 	},
 	{
 		name: 'Aljazeera',
 		type: 'html',
-		src: '<object seamlesstabbing="undefined" class="BrightcoveExperience" id="myExperience1474541474001" data="http://c.brightcove.com/services/viewer/federated_f9?&amp;width=680&amp;height=380&amp;flashID=myExperience1474541474001&amp;bgcolor=%23FFFFFF&amp;playerID=834025853001&amp;playerKey=AQ~~%2CAAAAmtUu4Zk~%2CoARQlkfrZncis5e3VirW1_jMMBOC_SsO&amp;isVid=true&amp;isUI=true&amp;dynamicStreaming=true&amp;%40videoPlayer=1474541474001&amp;autoStart=true&amp;debuggerID=&amp;startTime=1405645205983" type="application/x-shockwave-flash" height="100%" width="100%"><param value="always" name="allowScriptAccess"><param value="true" name="allowFullScreen"><param value="false" name="seamlessTabbing"><param value="true" name="swliveconnect"><param value="window" name="wmode"><param value="high" name="quality"><param value="#000000" name="bgcolor"></object>'
+		src: '<object seamlesstabbing="undefined" class="BrightcoveExperience" id="myExperience1474541474001" data="http://c.brightcove.com/services/viewer/federated_f9?&amp;width=680&amp;height=380&amp;flashID=myExperience1474541474001&amp;bgcolor=%23FFFFFF&amp;playerID=834025853001&amp;playerKey=AQ~~%2CAAAAmtUu4Zk~%2CoARQlkfrZncis5e3VirW1_jMMBOC_SsO&amp;isVid=true&amp;isUI=true&amp;dynamicStreaming=true&amp;%40videoPlayer=1474541474001&amp;autoStart=true&amp;debuggerID=&amp;startTime=1405645205983" type="application/x-shockwave-flash" height="100%" width="100%"><param value="always" name="allowScriptAccess"><param value="true" name="allowFullScreen"><param value="false" name="seamlessTabbing"><param value="true" name="swliveconnect"><param value="window" name="wmode"><param value="high" name="quality"><param value="#000000" name="bgcolor"></object>',
+		visible: false
 		//src: 'http://admin.brightcove.com/viewer/us20140724.1408/BrightcoveBootloader.swf?playerID=834025853001&autoStart=true&playerKey=AQ~~%2CAAAAmtUu4Zk~%2CoARQlkfrZncis5e3VirW1_jMMBOC_SsO&purl=http%3A%2F%2Fwww.alwatanvoice.com%2Flive%2F&%40videoPlayer=1474541474001&autoStart=false&bgcolor=%23000000&debuggerID=&dynamicStreaming=true&flashID=myExperience1474541474001&height=380&isUI=true&isVid=true&startTime=1405645205983&width=680'
 	},
 	{
@@ -501,12 +502,14 @@ var streams = [
 	{
 		name:'Snooker1',
 		type:'html',
-		src:'<object type="application/x-shockwave-flash" data="http://www.llb.su/misc/uppod/uppod.swf" width="100%" height="100%" id="llbvideoplayer" style="visibility: visible;"><param name="bgcolor" value="#ffffff"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><param name="id" value="llbvideoplayer"><param name="flashvars" value="st=http://www.llb.su/misc/uppod/playerstyle.txt?v=010415&amp;file=rtmp://video.llb.su/live_[240,480,720]p/Snookerroom&amp;embedcode=<iframe width=&quot;720&quot; height=&quot;420&quot; src=&quot;//www.llb.su/embed/player.php?uid=Snookerroom&quot; frameborder=&quot;0&quot;></iframe>&amp;comment=<a target=&quot;_new&quot; href=&quot;http://www.llb.su/&quot;>LLB.su</a>&amp;infoloader=1&amp;infoloaderinterval=60&amp;infoloaderurl=http://video.llb.su/counts/Snookerroom.html&amp;infoloadermask={1}&amp;infoloaderaddurl=0"></object>'
+		src:'<object type="application/x-shockwave-flash" data="http://www.llb.su/misc/uppod/uppod.swf" width="100%" height="100%" id="llbvideoplayer" style="visibility: visible;"><param name="bgcolor" value="#ffffff"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><param name="id" value="llbvideoplayer"><param name="flashvars" value="st=http://www.llb.su/misc/uppod/playerstyle.txt?v=010415&amp;file=rtmp://video.llb.su/live_[240,480,720]p/Snookerroom&amp;embedcode=<iframe width=&quot;720&quot; height=&quot;420&quot; src=&quot;//www.llb.su/embed/player.php?uid=Snookerroom&quot; frameborder=&quot;0&quot;></iframe>&amp;comment=<a target=&quot;_new&quot; href=&quot;http://www.llb.su/&quot;>LLB.su</a>&amp;infoloader=1&amp;infoloaderinterval=60&amp;infoloaderurl=http://video.llb.su/counts/Snookerroom.html&amp;infoloadermask={1}&amp;infoloaderaddurl=0"></object>',
+		visible: false
 	},
 	{
 		name:'Snooker2',
 		type:'html',
-		src:'<object type="application/x-shockwave-flash" data="http://www.llb.su/misc/uppod/uppod.swf" width="100%" height="100%" id="llbvideoplayer" style="visibility: visible;"><param name="bgcolor" value="#ffffff"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><param name="id" value="llbvideoplayer"><param name="flashvars" value="st=http://www.llb.su/misc/uppod/playerstyle.txt?v=010415&amp;file=rtmp://video.llb.su/live_[240,480,720]p/Snookerroom2&amp;embedcode=<iframe width=&quot;720&quot; height=&quot;420&quot; src=&quot;//www.llb.su/embed/player.php?uid=Snookerroom2&quot; frameborder=&quot;0&quot;></iframe>&amp;comment=<a target=&quot;_new&quot; href=&quot;http://www.llb.su/&quot;>LLB.su</a>&amp;infoloader=1&amp;infoloaderinterval=60&amp;infoloaderurl=http://video.llb.su/counts/Snookerroom2.html&amp;infoloadermask={1}&amp;infoloaderaddurl=0"></object>'
+		src:'<object type="application/x-shockwave-flash" data="http://www.llb.su/misc/uppod/uppod.swf" width="100%" height="100%" id="llbvideoplayer" style="visibility: visible;"><param name="bgcolor" value="#ffffff"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><param name="id" value="llbvideoplayer"><param name="flashvars" value="st=http://www.llb.su/misc/uppod/playerstyle.txt?v=010415&amp;file=rtmp://video.llb.su/live_[240,480,720]p/Snookerroom2&amp;embedcode=<iframe width=&quot;720&quot; height=&quot;420&quot; src=&quot;//www.llb.su/embed/player.php?uid=Snookerroom2&quot; frameborder=&quot;0&quot;></iframe>&amp;comment=<a target=&quot;_new&quot; href=&quot;http://www.llb.su/&quot;>LLB.su</a>&amp;infoloader=1&amp;infoloaderinterval=60&amp;infoloaderurl=http://video.llb.su/counts/Snookerroom2.html&amp;infoloadermask={1}&amp;infoloaderaddurl=0"></object>',
+		visible: false
 	},
 	{
 		name:'Cats',
