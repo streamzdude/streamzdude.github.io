@@ -175,14 +175,13 @@ function StreamzVM(staticStreams) {
 
 	this.save = function() {
 		var windows = self.windows().map(function(window) { return window.save() });
-		var hiddenStreams = self.streams()
-				.filter(function(stream) { return !stream.visible() })
-				.map(function(stream) { return stream.name() });
+		var streamsVisibility = self.streams()
+				.map(function(stream) { return {name:stream.name(), visible:stream.visible()} });
 
 		var data = {
 			ver: ver,
 			windows: windows,
-			hiddenStreams: hiddenStreams,
+			streamsVisibility: streamsVisibility,
 			showReload: self.showReload(),
 			showLocks: self.showLocks()
 		};
@@ -196,11 +195,11 @@ function StreamzVM(staticStreams) {
 			stream.window(null);
 		});
 
-		if (data.hiddenStreams) {
-			data.hiddenStreams.forEach(function(streamName) {
-				var stream = self.findStream(streamName)
+		if (data.streamsVisibility) {
+			data.streamsVisibility.forEach(function(streamVisibility) {
+				var stream = self.findStream(streamVisibility.name)
 				if (stream)
-					stream.visible(false);
+					stream.visible(streamVisibility.visible);
 			});
 		}
 
