@@ -390,6 +390,11 @@ var streams = [
 //		visible: false
 	},
 	{
+		name: 'Fox News',
+		type: 'iframe',
+		src: 'http://vaughnlive.tv/embed/video/newzviewz?viewers=true&amp;watermark=false&amp;autoplay=true'
+	},
+	{
 		name: 'BBC',
 		type: 'jwplayer',
 		src: 'http://wpc.c1a9.edgecastcdn.net/hls-live/20C1A9/bbc_world/ls_satlink/b_828.m3u8',
