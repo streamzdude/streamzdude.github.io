@@ -536,7 +536,8 @@ $('#editStreamDlg').dialog({
 
 
 function initAnalytics() {
-	firebase = new Firebase("https://streamz.firebaseio.com/");
+	firebase = new Firebase("https://streamz.firebaseio.com/stats");
+
 	firebase.child('hits').transaction(function(i){ return (i||0)+1 });
 	if (isShok) {
 		var o = {child: f, transaction: f, update: f, push: f};
