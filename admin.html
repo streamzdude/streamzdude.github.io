@@ -5,13 +5,17 @@
 	<link rel="stylesheet" href="normalize.css"/>
 	<link rel="stylesheet" href="style.css"/>
 </head>
-<body>
+<body class="adminBody">
 
-<div data-bind="with: authData">
-	Logged in: <span data-bind="text: uid + ' (' + provider + ')'"></span>
+<div style="display:none" data-bind="visible: initialized">
+	<div data-bind="with: authData">
+		Logged in: <span data-bind="text: uid + ' (' + provider + ')'"></span>
+	</div>
+	<button data-bind="click: login, visible: !authData()">Login</button>
+	<button data-bind="click: logout, visible: !!authData()">Logout</button>
 </div>
-<button data-bind="click: login, visible: !authData()">Login</button>
-<button data-bind="click: logout, visible: !!authData()">Logout</button>
+
+<div data-bind="visible: !initialized()">Initializing...</div>
 
 <p><a href="./">Back to streamz</a></p>
 

@@ -1,9 +1,8 @@
-var firebase = new Firebase("https://streamz.firebaseio.com/");
-
 
 function VM() {
 	var self = this;
 
+	this.initialized = ko.observable(false);
 	this.authData = ko.observable(null);
 
 	this.login = function () {
@@ -26,12 +25,10 @@ function VM() {
 var vm = new VM();
 ko.applyBindings(vm);
 
-
+var firebase = new Firebase("https://streamz.firebaseio.com/");
 var authdata = firebase.getAuth();
 if (authdata) {
 	console.log("Logged in: " + authdata.uid + " (" + authdata.provider + ")");
 	vm.authData(authdata);
 }
-else {
-	vm.login();
-}
+vm.initialized(true);

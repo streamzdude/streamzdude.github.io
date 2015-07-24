@@ -10,6 +10,15 @@ body {
 	font-family: sans-serif;
 }
 
+.adminBody {
+	color: #bada55;
+	margin: 5px;
+}
+
+button {
+	color: initial;
+}
+
 header {
 	background: #484848;
 	box-shadow: 0px 1px 3px black;
