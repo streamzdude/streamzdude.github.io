@@ -362,8 +362,8 @@ var streams = [
 	},
 	{
 		name: 'Ch 2',
-		type: 'iframe',
-		src: 'http://www.ustream.tv/embed/20887562?v=3&amp;wmode=direct'
+		type: 'jwplayer',
+		src: 'http://209.133.208.194:1935/app/te23s-channel/playlist.m3u8'
 	},
 	{
 		name: 'Ch 10',
