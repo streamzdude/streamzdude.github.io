@@ -153,13 +153,15 @@ nav a.customizeLink.streamLink.active {
 
 .customizeWindow {
 	position: absolute;
+	overflow: auto;
+	max-height: 92%;
 	top: 3px;
 	left: 5px;
 	border: 1px solid #000;
 	border-radius: 5px;
 	background-color: #777;
 	z-index: 1000;
-	padding: 4px 7px;
+	padding: 4px 7px;	
 }
 
 .customizeWindow .title {

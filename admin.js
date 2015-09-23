@@ -27,13 +27,15 @@ function VM() {
 			return;
 
 		var streams = self.streams().reduce(function(currStreams, stream) {
-			currStreams[stream.name()] = {
+			var name = stream.name() || '-';
+			currStreams[name] = {
 				type: stream.type(),
-				src: stream.src()
+				src: stream.src(),
+				visible: stream.visible()
 			};
 			['bufferlength', 'image', 'width', 'height'].forEach(function(prop) {
 				if (typeof stream[prop] !== 'undefined') {
-					currStreams[stream.name()][prop] = stream[prop];
+					currStreams[name][prop] = stream[prop];
 				}
 			});
 			return currStreams;
@@ -41,9 +43,7 @@ function VM() {
 
 		var streamsOrder = self.streams().map(function(stream) { return stream.name().replace(/,/g,'') }).join(",");
 
-		firebase.child("streamsOrder").set(streamsOrder);
-
-		firebase.child("streams").set(streams, function(error) {
+		firebase.set({streams: streams, streamsOrder: streamsOrder}, function(error) {
 			if (error) {
 				console.log("failed saving streams:", error);
 				alert(error.message);
@@ -83,18 +83,19 @@ function VM() {
 
 
 function listenForStreams() {
-	firebase.child("streams").on("value", function(snapshot) {
-		var fbStreams = snapshot.val();
-		console.log("received streams:", fbStreams);
+	firebase.on("value", function(snapshot) {
+		var data = snapshot.val();
+		console.log("received data:", data);
 
-		var vmStreams = Object.keys(fbStreams).map(function(name) {
-			return new Stream($.extend({name:name}, fbStreams[name]));
-		});
+		var streams = data.streamsOrder.split(',')
+			.map(function(name) {
+				return new Stream($.extend({name:name}, data.streams[name]));
+			});
 
-		vm.streams(vmStreams);
+		vm.streams(streams);
 
-	}, function (errorObject) {
-  		console.log("Reading streams failed: ", errorObject.code);
+	}, function (error) {
+  		console.log("Reading streams failed: ", error.code);
 	});
 }
 
@@ -113,6 +114,7 @@ if (auth) {
 
 }
 vm.initialized(true);
+
 
 
 

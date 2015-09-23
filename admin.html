@@ -25,15 +25,17 @@
 		<thead data-bind="visible: streams().length > 0">
 			<tr>
 				<th width="20%">Name</th>
+				<th width="3%">Visible</th>
 				<th width="10%">Type</th>
-				<th width="65%">Source</th>
+				<th width="60%">Source</th>
 				<th width="5%"></th>
 			</tr>
 		</thead>
 
 		<tbody data-bind="foreach: streams">
-			<tr>
+			<tr style="text-align: center">
 				<td><input type="text" data-bind="textInput: name"/></td>
+				<td><input type="checkbox" data-bind="checked: visible"/></td>
 				<td>
 					<select data-bind="value: type">
 						<option value="jwplayer">jwplayer</option>
