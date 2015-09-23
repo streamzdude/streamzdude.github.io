@@ -3,9 +3,9 @@ function Stream(stream) {
 	stream = stream || {};
 	$.extend(this, stream);
 	this.visible = ko.observable(stream.visible !== false);
-	this.name = ko.observable(stream.name);
-	this.type = ko.observable(stream.type);
-	this.src = ko.observable(stream.src);
+	this.name = ko.observable(stream.name || '');
+	this.type = ko.observable(stream.type || 'jwplayer');
+	this.src = ko.observable(stream.src || '');
 }
 
 function VM() {
