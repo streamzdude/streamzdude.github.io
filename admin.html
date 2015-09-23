@@ -1,11 +1,11 @@
 <!doctype html>
-<html>
+<html class="admin">
 <head>
 	<title>Streamz Admin</title>
 	<link rel="stylesheet" href="normalize.css"/>
 	<link rel="stylesheet" href="style.css"/>
 </head>
-<body class="adminBody">
+<body>
 
 <div style="display:none" data-bind="visible: initialized">
 	<div data-bind="with: authData">
@@ -19,17 +19,52 @@
 
 <p><a href="./">Back to streamz</a></p>
 
-<div>
+<div data-bind="visible: initialized">
 	<h3>Streams:</h3>
-	<div data-bind="foreach: streams">
+	<table>
+		<thead data-bind="visible: streams().length > 0">
+			<tr>
+				<th width="20%">Name</th>
+				<th width="10%">Type</th>
+				<th width="65%">Source</th>
+				<th width="5%"></th>
+			</tr>
+		</thead>
 
-	</div>
+		<tbody data-bind="foreach: streams">
+			<tr>
+				<td><input type="text" data-bind="textInput: name"/></td>
+				<td>
+					<select data-bind="value: type">
+						<option value="jwplayer">jwplayer</option>
+						<option value="iframe">iframe</option>
+						<option value="html">html</option>
+					</select>
+				</td>
+				<td><input type="text" data-bind="textInput: src"/></td>
+				<td style="padding-left: 7px"><button data-bind="click: $parent.removeStream">Delete</button></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<p data-bind="with: newStream">
+		Name: <input type="text" data-bind="textInput: name, hasFocus: hasFocus"/>
+		Type:
+		<select data-bind="value: type">
+			<option value="jwplayer">jwplayer</option>
+			<option value="iframe">iframe</option>
+			<option value="html">html</option>
+		</select>
+		Source: <input type="text" data-bind="textInput: src"/>
+		<button data-bind="click: $parent.addStream">Add Stream</button>
+	</p>
+	<p><button data-bind="click: save">Save Streams</button></p>
 </div>
 
 <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
 <script src="jquery-2.1.1.min.js"></script>
 
-<script src="knockout-3.1.0.js"></script>
+<script src="knockout-3.3.0.js"></script>
 
 <script src="admin.js"></script>
 

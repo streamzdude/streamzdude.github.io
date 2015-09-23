@@ -1,6 +1,6 @@
 * { box-sizing: border-box; -moz-box-sizing: border-box; }
 
-html, body {
+html:not(.admin), html:not(.admin) body {
 	height: 100%;
 	overflow: hidden;
 }
@@ -10,9 +10,28 @@ body {
 	font-family: sans-serif;
 }
 
-.adminBody {
+
+html.admin body {
 	color: #bada55;
 	margin: 5px;
+}
+
+html.admin input[type=text], html.admin select {
+	color: #bada55;
+	background-color: #444;
+}
+
+html.admin table input[type=text], html.admin table select {
+	width: 100%;
+}
+
+html.admin table {
+	width: 80%;
+	margin: 20px;
+}
+
+html.admin table td {
+	padding: 2px;
 }
 
 button {
