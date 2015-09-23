@@ -46,6 +46,7 @@ function VM() {
 		firebase.child("streams").set(streams, function(error) {
 			if (error) {
 				console.log("failed saving streams:", error);
+				alert(error.message);
 			}
 		});
 	};
