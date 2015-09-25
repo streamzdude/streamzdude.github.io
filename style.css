@@ -150,18 +150,37 @@ nav a.customizeLink.streamLink.active {
 	margin-top: -1px;
 }
 
-
-.customizeWindow {
+.miscWindow {
 	position: absolute;
 	overflow: auto;
-	max-height: 92%;
-	top: 3px;
-	left: 5px;
 	border: 1px solid #000;
 	border-radius: 5px;
 	background-color: #777;
 	z-index: 1000;
-	padding: 4px 7px;	
+	padding: 4px 7px;
+}
+
+.newsWindow {
+	top: -150px;
+	right: 5px;
+	font-size: 0.85em;
+	max-width: 340px;
+	transition: top 2s ease;
+}
+
+.newsWindow.visible {
+	top: 3px;
+}
+
+.newsWindow h4 { 
+	margin: 0 0 3px;
+	text-align: center;
+}
+
+.customizeWindow {
+	max-height: 92%;
+	top: 3px;
+	left: 5px;
 }
 
 .customizeWindow .title {

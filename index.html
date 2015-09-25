@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
 <head>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
 	<title>Streamz</title>
 	<link rel="stylesheet" href="normalize.css"/>
 	<link rel="stylesheet" href="jquery-ui.css"/>
@@ -20,7 +22,7 @@
 
 <main>
 	<!-- ko foreach: windows -->
-		<div class="window" data-bind="window: $data">
+		<div class="window" data-bind="window: $data, visible: true" style="display:none">
 			<div class="title">
 				<span data-bind="text: stream.name"></span>
 				<a href="#" data-bind="visible: $root.showReload, click: $root.reloadWindow" class="ui-icon ui-icon-arrowrefresh-1-e titleBtn" title="Reload" style="margin-left: 3px"></a>
@@ -33,7 +35,7 @@
 		</div>
 	<!-- /ko -->
 
-	<div class="customizeWindow" style="display: none" data-bind="visible: isCustomizing">
+	<div class="customizeWindow miscWindow" style="display: none" data-bind="visible: isCustomizing">
 		<div class="title">Customize</div>
 		<a href="#" data-bind="click: toggleCustomize" class="ui-icon ui-icon-close closeBtn" title="Close"></a>
 		<a href="#" data-bind="click: addStream">Add Stream</a>
@@ -60,9 +62,17 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="newsWindow miscWindow" data-bind="css: {visible: newsVisible}">
+		<a href="#" data-bind="click: closeNews" class="ui-icon ui-icon-close closeBtn" title="Close"></a>
+		<h4>news</h4>
+		<div data-bind="foreach: newsItems">
+			<div>- <span data-bind="text: $data"></span></div>
+		</div>
+	</div>
 </main>
 
-<div id="editStreamDlg" data-bind="with: editedStream" title="Add/Edit Stream">
+<div id="editStreamDlg" data-bind="with: editedStream" title="Add/Edit Stream" style="display:none">
 	<p>Name: <input type="text" data-bind="value: name"/></p>
 	<p>
 		Type:

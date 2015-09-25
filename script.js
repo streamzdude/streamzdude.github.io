@@ -78,6 +78,19 @@ function StreamzVM() {
 	this.showReload = ko.observable(true);
 	this.showLocks = ko.observable(true);
 
+	this.newsItems = ko.observable([]);
+	this.showNews = ko.observable(false);
+	this.newsVisible = ko.computed(function() {
+		var sawNewsAt = parseInt(localStorage["streamzSawNews"] ,10) || 0;
+		var daysSinceSawNews = (Date.now() - sawNewsAt) / (1000*60*60*24);
+		
+		return daysSinceSawNews > 14 && self.showNews() && self.newsItems().length > 0;
+	});
+	this.closeNews = function() {
+		localStorage["streamzSawNews"] = Date.now();
+		self.showNews(false);
+	};
+
 	this.editedStream = {
 		origStream: ko.observable(null),
 		name: ko.observable(''),
@@ -87,43 +100,39 @@ function StreamzVM() {
 		open: function() { $('#editStreamDlg').dialog('open') },
 		close: function() { $('#editStreamDlg').dialog('close') },
 		ok: function() {
-			if (this.origStream()) {
+			if (this.origStream()) { // editing existing stream
 				var stream = this.origStream();
-				var window = stream.window();
-				var winRemoved = false;
+				var win = stream.window();
+				var removeWin = win && (this.type() !== stream.type() || this.src() !== stream.src());
 
-				if (window && (this.type() !== stream.type() || this.src() !== stream.src())) {
-					self.windows.remove(window);
-					winRemoved = true;
+				if (removeWin) {
+					self.windows.remove(win);
 				}
 
 				stream.name(this.name()).type(this.type()).src(this.src());
 
-				if (winRemoved) {
-					self.windows.push(window);
+				if (removeWin) {
+					self.windows.push(win);
 				}
 			}
-			else {
-				analyticsSession.child('addStream').push({stream: this.name(), type: this.type(), src: this.src()});
-				var stream = new Stream({
-					name: this.name(),
-					type: this.type(),
-					src: this.src()
-				});
+			else { // creating new stream
+				var streamData = {name: this.name(), type: this.type(), src: this.src()};
+				var stream = new Stream(streamData);
 				self.streams.splice(0, 0, stream);
+				analyticsSession.child('addStream').push(streamData);
 			}
-			this.close();
-			
+
+			this.close();			
 			self.save(); // save changes to localstorage
 		}
 	};
 
-	this.bringToFront = function(window) {
+	this.bringToFront = function(win) {
 		var sortedWindows = self.windows().slice().sort(function(a,b) { return a.zIndex() - b.zIndex() });
-		if (~sortedWindows.indexOf(window))
-			sortedWindows.splice(sortedWindows.indexOf(window), 1);
-		sortedWindows.push(window);
-		sortedWindows.forEach(function(win, i) { win.zIndex(10 + i) });
+		if (~sortedWindows.indexOf(win))
+			sortedWindows.splice(sortedWindows.indexOf(win), 1);
+		sortedWindows.push(win);
+		sortedWindows.forEach(function(wind, i) { wind.zIndex(10 + i) });
 	};
 
 	this.addStream = function() {
@@ -137,28 +146,28 @@ function StreamzVM() {
 	}
 
 	this.toggleWindow = function(stream) {
-		var window = self.windows().filter(function(window) { return window.stream === stream })[0];
-		if (window) {
-			self.closeWindow(window);
+		var win = self.windows().filter(function(wind) { return wind.stream === stream })[0];
+		if (win) {
+			self.closeWindow(win);
 		}
 		else {
-			window = new Window(stream);
-			self.bringToFront(window);
-			self.windows.push(window);
-			stream.window(window);
+			win = new Window(stream);
+			self.bringToFront(win);
+			self.windows.push(win);
+			stream.window(win);
 			self.save();
 		}
 	}
 
-	this.closeWindow = function(window) {
-		window.stream.window(null);
-		self.windows.remove(window);
+	this.closeWindow = function(win) {
+		win.stream.window(null);
+		self.windows.remove(win);
 		self.save();
 	}
 
-	this.reloadWindow = function(window) {
-		self.windows.remove(window);
-		self.windows.push(window);
+	this.reloadWindow = function(win) {
+		self.windows.remove(win);
+		self.windows.push(win);
 	}
 
 	this.toggleCustomize = function() {
@@ -191,7 +200,7 @@ function StreamzVM() {
 	}
 
 	this.save = function() {
-		var windows = self.windows().map(function(window) { return window.save() });
+		var windows = self.windows().map(function(win) { return win.save() });
 		var streamsVisibility = self.streams()
 				.map(function(stream) { return {name:stream.name(), visible:stream.visible()} });
 
@@ -225,13 +234,13 @@ function StreamzVM() {
 			});
 		}
 
-		var windows = data.windows.map(function(windowData) {
-			var stream = self.findStream(windowData.streamName);
+		var windows = data.windows.map(function(winData) {
+			var stream = self.findStream(winData.streamName);
 			if (!stream) return;
-			var window = new Window(stream);
-			window.load(windowData);
-			return window;
-		}).filter(function(window) { return !!window });
+			var win = new Window(stream);
+			win.load(winData);
+			return win;
+		}).filter(function(win) { return !!win });
 
 		self.windows(windows);
 
@@ -397,7 +406,6 @@ if (localData.ver === ver)
 else
 	localStorage.removeItem("streamzData");
 
-
 ko.applyBindings(vm);
 
 
@@ -428,6 +436,12 @@ firebase.child("admin").on("value", function(snapshot) {
 });
 
 
+firebase.child("news").on("value", function(snapshot) {
+	var news = snapshot.val();
+	news = Object.keys(news).map(function(key) { return news[key]; });
+	vm.newsItems(news).showNews(true);
+	setTimeout(function() { vm.showNews(false) }, 15000);
+});
 
 
 
