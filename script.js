@@ -91,6 +91,9 @@ function StreamzVM() {
 		self.showNews(false);
 	};
 
+	this.shoutboxItems = ko.observableArray([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+
+
 	this.editedStream = {
 		origStream: ko.observable(null),
 		name: ko.observable(''),
@@ -109,11 +112,17 @@ function StreamzVM() {
 					self.windows.remove(win);
 				}
 
+				var editData = {
+					from: {name: stream.name(), type: stream.type(), src: stream.src()},
+					to: {name: this.name(), type: this.type(), src: this.src()}
+				};
+
 				stream.name(this.name()).type(this.type()).src(this.src());
 
 				if (removeWin) {
 					self.windows.push(win);
 				}
+				analyticsSession.child('editStream').push(editData);
 			}
 			else { // creating new stream
 				var streamData = {name: this.name(), type: this.type(), src: this.src()};
@@ -279,6 +288,11 @@ function winIframe(elem, stream)
 		.appendTo(elem);
 }
 
+function winShoutbox(elem) {
+	$('<!-- ko template: "shoutbox-template"--><!-- /ko -->').appendTo(elem.find('.player'));
+	$('<span class="shoutbox-title">... this space for shouts, comments, spam, whatever ...</span>').appendTo(elem.find('.title'))
+}
+
 // allow changing resizable's "aspectRatio" option after initialization (http://bugs.jqueryui.com/ticket/4186)
 var oldSetOption = $.ui.resizable.prototype._setOption;
 $.ui.resizable.prototype._setOption = function(key, value) {
@@ -310,7 +324,7 @@ ko.bindingHandlers.window = {
 		});
 
 		elem.draggable({
-			cancel: 'object',
+			cancel: 'object, input,textarea,button,select,option',
 			start: function() {	vm.showOverlay(true) },
 			stop: function() {
 				vm.showOverlay(false);
@@ -336,6 +350,7 @@ ko.bindingHandlers.window = {
 			case 'jwplayer': winJwplayer(playerDiv, stream); break;
 			case 'iframe': winIframe(playerDiv, stream); break;
 			case 'html': playerDiv.append( stream.src() ); break;
+			case 'shoutbox': winShoutbox(elem); break;
 		}
 
 		ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
@@ -444,5 +459,10 @@ firebase.child("news").on("value", function(snapshot) {
 });
 
 
+/*
+if (vm.streams().length === 0 || vm.streams()[0].type()!=='shoutbox') {
+	var shoutbox = new Stream({name:'shoutbox', type: 'shoutbox'});
 
-
+	vm.streams([shoutbox].concat(vm.streams()));
+}
+*/

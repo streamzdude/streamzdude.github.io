@@ -89,6 +89,22 @@
 	<button class="ui-state-default" data-bind="click: close">Cancel</button>
 </div>
 
+<script type="text/html" id="shoutbox-template">
+	<div class="shoutbox">
+		<div class="shoutbox-items-container" data-bind="foreach: $parent.shoutboxItems">
+			<div class="shoutbox-item">
+				z
+			</div>
+		</div>
+		<div class="shoutbox-inputbox">
+			<input type="text"/>
+			<button>Send</button>
+			Name:
+			<input type="text"/>
+		</div>
+	</div>
+</script>
+
 <script src="http://jwpsrv.com/library/Av9ogCAyEeSQJyIAC0MJiQ.js"></script>
 <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
 <script src="jquery-2.1.1.min.js"></script>

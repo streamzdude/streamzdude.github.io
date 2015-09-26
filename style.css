@@ -98,7 +98,8 @@ nav a.customizeLink.streamLink.active {
 	border: 1px solid #000;
 	border-radius: 5px;
 	background-color: #777;
-	box-sizing: content-box;	
+	box-sizing: content-box;
+	overflow:hidden;
 }
 
 .window .player, .window .overlay {
@@ -126,6 +127,7 @@ nav a.customizeLink.streamLink.active {
 	height: 15px;
 	padding: 0 5px;
 	font-size: 9pt;
+	white-space: nowrap;
 }
 
 .window .title > span {
@@ -172,7 +174,7 @@ nav a.customizeLink.streamLink.active {
 	top: 3px;
 }
 
-.newsWindow h4 { 
+h4 { 
 	margin: 0 0 3px;
 	text-align: center;
 }
@@ -210,4 +212,56 @@ nav a.customizeLink.streamLink.active {
 input[type=text], textarea {
 	color: black;
 	font-size: 0.8em;
+}
+
+.shoutbox {
+	position: relative;
+	height: 100%;
+	overflow: hidden;
+	font-size: 0.83em;
+}
+
+.shoutbox-title {
+	position: absolute;
+	float: none;
+	top: 0;
+	left: 0;
+	right: 0;
+	font-weight: bold;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.shoutbox-items-container {
+	position: absolute;
+    overflow-x: hidden;
+    overflow-y: auto;
+    left: 0;
+    right: 3px;
+    top: 0px;
+    bottom: 35px;
+	padding: 3px 0px 0px;
+}
+
+.shoutbox-inputbox {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 30px;
+	white-space: nowrap;
+	overflow: hidden;
+	padding: 0px 7px;
+}
+
+.shoutbox-inputbox input[type=text] {
+
+}
+
+.shoutbox-item {	
+	margin: 2px 8px;
+	border-radius: 3px;
+	border: 1px solid #5b5b5b;
+	padding: 3px;
+	background-color: #747474;
 }
