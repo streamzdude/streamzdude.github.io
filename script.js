@@ -351,7 +351,7 @@ $.ui.resizable.prototype._setOption = function(key, value) {
 
 
 var timeagoSettings = {
-      allowFuture: true,
+      allowFuture: false,
       strings: {
         prefixAgo: null,
         prefixFromNow: null,
