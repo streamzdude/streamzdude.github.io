@@ -609,7 +609,7 @@ firebase.child("news").on("value", function(snapshot) {
 	if (!items) return;
 	items = Object.keys(items).map(function(key) { return items[key]; });
 	vm.newsItems(items).showNews(true);
-	setTimeout(function() { vm.showNews(false) }, 15000);
+	setTimeout(function() { vm.showNews(false) }, 20000);
 });
 
 
