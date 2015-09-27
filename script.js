@@ -82,8 +82,7 @@ function StreamzVM() {
 	this.showNews = ko.observable(false);
 	this.newsVisible = ko.computed(function() {
 		var sawNewsAt = parseInt(localStorage["streamzSawNews"] ,10) || 0;
-		var daysSinceSawNews = (Date.now() - sawNewsAt) / (1000*60*60*24);
-		
+		var daysSinceSawNews = (Date.now() - sawNewsAt) / (1000*60*60*24);		
 		return daysSinceSawNews > 14 && self.showNews() && self.newsItems().length > 0;
 	});
 	this.closeNews = function() {
@@ -91,8 +90,50 @@ function StreamzVM() {
 		self.showNews(false);
 	};
 
-	this.shoutboxItems = ko.observableArray([{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}]);
+	var shoutboxName;
+	if (localStorage["streamzShoutboxName"])
+		shoutboxName = localStorage["streamzShoutboxName"];
+	else {
+		localStorage["streamzShoutboxName"] = shoutboxName = ('anon' + Math.floor(Math.random()*1000));
+	}
 
+	this.shoutbox = {
+		items: ko.observableArray([]),
+		message: ko.observable(''),
+		name: ko.observable(shoutboxName)
+			    .extend({rateLimit: {method: "notifyWhenChangesStop", timeout: 300}}),
+		onKeyPress: function(data, event) {
+			if (event.which !== 13) return true;
+			if (self.shoutbox.message().trim().length === 0 || 
+				self.shoutbox.name().trim().length === 0) return true;
+
+			firebase.child("shoutbox").push({
+				msg: self.shoutbox.message(),
+				name: self.shoutbox.name(),
+				time: Firebase.ServerValue.TIMESTAMP,
+				sessionId: analyticsSession.key(),
+				ip: ip
+			});
+
+			self.shoutbox.message('');
+		}
+	};
+
+	// scroll shoutbox to bottom when items are updated:
+	this.shoutbox.items.subscribe(function() {
+		var container = $('.shoutbox-items-container')[0];
+		if (!container) return;
+
+		var isScrolledToBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 1;
+		setTimeout(function() {
+			if (isScrolledToBottom) 
+        		container.scrollTop = container.scrollHeight - container.clientHeight;
+		}, 0);
+	});
+
+	this.shoutbox.name.subscribe(function(name) {		
+		localStorage["streamzShoutboxName"] = shoutboxName = name;
+	});
 
 	this.editedStream = {
 		origStream: ko.observable(null),
@@ -150,6 +191,7 @@ function StreamzVM() {
 	}
 
 	this.editStream = function(stream) {
+		if (stream.type() === 'shoutbox') return;
 		self.editedStream.origStream(stream).name(stream.name()).type(stream.type()).src(stream.src());
 		self.editedStream.open();
 	}
@@ -290,7 +332,12 @@ function winIframe(elem, stream)
 
 function winShoutbox(elem) {
 	$('<!-- ko template: "shoutbox-template"--><!-- /ko -->').appendTo(elem.find('.player'));
-	$('<span class="shoutbox-title">... this space for shouts, comments, spam, whatever ...</span>').appendTo(elem.find('.title'))
+	$('<span class="shoutbox-title">... comments, spam, whatever ...</span>').appendTo(elem.find('.title'));
+	setTimeout(function(){
+		$('main').prop({scrollTop: 0, scrollLeft: 0}); // focus on shoutbox's input causes <main> to be scrolled if the input was out of view
+		var container = $('.shoutbox-items-container')[0];
+		container.scrollTop = container.scrollHeight - container.clientHeight;
+	}, 0);
 }
 
 // allow changing resizable's "aspectRatio" option after initialization (http://bugs.jqueryui.com/ticket/4186)
@@ -300,6 +347,108 @@ $.ui.resizable.prototype._setOption = function(key, value) {
     if (key === "aspectRatio") {
         this._aspectRatio = !!value;
     }
+};
+
+
+var timeagoSettings = {
+      allowFuture: true,
+      strings: {
+        prefixAgo: null,
+        prefixFromNow: null,
+        suffixAgo: "ago",
+        suffixFromNow: "from now",
+        inPast: 'any moment now',
+        seconds: "less than a minute",
+        minute: "about a minute",
+        minutes: "%d minutes",
+        hour: "about an hour",
+        hours: "about %d hours",
+        day: "a day",
+        days: "%d days",
+        month: "about a month",
+        months: "%d months",
+        year: "about a year",
+        years: "%d years",
+        wordSeparator: " ",
+        numbers: []
+      }
+};
+
+function timeago(timestamp) {   
+    var distanceMillis = Date.now() - timestamp;
+    var $l = timeagoSettings.strings;
+    var prefix = $l.prefixAgo;
+    var suffix = $l.suffixAgo;
+    if (timeagoSettings.allowFuture) {
+        if (distanceMillis < 0) {
+            prefix = $l.prefixFromNow;
+            suffix = $l.suffixFromNow;
+        }
+    }
+
+    var seconds = Math.abs(distanceMillis) / 1000;
+    var minutes = seconds / 60;
+    var hours = minutes / 60;
+    var days = hours / 24;
+    var years = days / 365;
+
+    function substitute(stringOrFunction, number) {
+        var string = typeof stringOrFunction === 'function' ? stringOrFunction(number, distanceMillis) : stringOrFunction;
+        var value = ($l.numbers && $l.numbers[number]) || number;
+        return string.replace(/%d/i, value);
+    }
+
+    var words = seconds < 45 && substitute($l.seconds, Math.round(seconds)) ||
+        seconds < 90 && substitute($l.minute, 1) ||
+        minutes < 45 && substitute($l.minutes, Math.round(minutes)) ||
+        minutes < 90 && substitute($l.hour, 1) ||
+        hours < 24 && substitute($l.hours, Math.round(hours)) ||
+        hours < 42 && substitute($l.day, 1) ||
+        days < 30 && substitute($l.days, Math.round(days)) ||
+        days < 45 && substitute($l.month, 1) ||
+        days < 365 && substitute($l.months, Math.round(days / 30)) ||
+        years < 1.5 && substitute($l.year, 1) ||
+        substitute($l.years, Math.round(years));
+
+    var separator = $l.wordSeparator || "";
+    if ($l.wordSeparator === undefined) { separator = " "; }
+    return [prefix, words, suffix].join(separator).trim()
+}
+
+
+var timeagoTimer;
+var numTimeago = 0;
+
+function timeagoUpdate() {
+	$('.timeago').text(function() {
+		return timeago( $(this).data('timestamp') );
+	});
+}
+
+ko.bindingHandlers.timeago = {
+	init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+		var timestamp = ko.unwrap( valueAccessor() );
+		var elem = $(element);
+
+		elem.addClass('timeago')
+			.data('timestamp', timestamp)			
+			.text( timeago(timestamp) )
+
+		if (numTimeago === 0) {
+			timeagoTimer = setInterval(timeagoUpdate, 30000);
+		}
+		numTimeago++;
+
+		ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+			elem.removeClass('timeago')
+				.removeData('timestamp');
+			numTimeago--;
+			if (numTimeago === 0) {
+				clearInterval(timeagoTimer);
+				timeagoTimer = null;
+			}
+		});
+	}
 };
 
 ko.bindingHandlers.window = {
@@ -324,7 +473,7 @@ ko.bindingHandlers.window = {
 		});
 
 		elem.draggable({
-			cancel: 'object, input,textarea,button,select,option',
+			cancel: 'object, .no-drag, input,textarea,button,select,option',
 			start: function() {	vm.showOverlay(true) },
 			stop: function() {
 				vm.showOverlay(false);
@@ -380,10 +529,13 @@ $('#editStreamDlg').dialog({
 });
 
 
+
+
+
 function initAnalytics() {
 	firebase.child('stats/hits').transaction(function(i){ return (i||0)+1 });
 	if (noAnalytics) {
-		var o = {child: f, transaction: f, update: f, push: f, set: f};
+		var o = {child: f, transaction: f, update: f, push: f, set: f, key: function(){ return 'no-analytics' }};
 		function f() { return o }
 		return o;
 	}
@@ -396,11 +548,12 @@ function initAnalytics() {
 		session.onDisconnect().update({ended: Firebase.ServerValue.TIMESTAMP});
 
 		$.getJSON('http://ip-api.com/json').done(function(data) {
-			ipData = data;
-			session.update({ipData:data, ip: data.query});
+			ip = data.query;
+			session.update({ipData:data, ip: ip});
 		}).fail(function() {
 			$.get('http://icanhazip.com').done(function(data) {
-				session.update({ip: data.trim()});
+				ip = data.trim();
+				session.update({ip: ip});
 			});
 		});
 
@@ -410,7 +563,7 @@ function initAnalytics() {
 
 var firebase = new Firebase("https://streamz.firebaseio.com/");
 var noAnalytics = localStorage['no-analytics'] === 'true';
-var ipData = {};
+var ip = 'n/a';
 var analyticsSession = initAnalytics();
 var localData = JSON.parse(localStorage["streamzData"] || '{}');
 
@@ -452,17 +605,19 @@ firebase.child("admin").on("value", function(snapshot) {
 
 
 firebase.child("news").on("value", function(snapshot) {
-	var news = snapshot.val();
-	news = Object.keys(news).map(function(key) { return news[key]; });
-	vm.newsItems(news).showNews(true);
+	var items = snapshot.val();
+	if (!items) return;
+	items = Object.keys(items).map(function(key) { return items[key]; });
+	vm.newsItems(items).showNews(true);
 	setTimeout(function() { vm.showNews(false) }, 15000);
 });
 
 
-/*
-if (vm.streams().length === 0 || vm.streams()[0].type()!=='shoutbox') {
-	var shoutbox = new Stream({name:'shoutbox', type: 'shoutbox'});
+firebase.child("shoutbox").on("value", function(snapshot) {	
+	var items = snapshot.val();
+	if (!items) return;
+	items = Object.keys(items).map(function(key) { return items[key]; });
+	vm.shoutbox.items(items);
+});
 
-	vm.streams([shoutbox].concat(vm.streams()));
-}
-*/
+

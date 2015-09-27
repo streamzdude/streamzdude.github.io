@@ -41,11 +41,16 @@ button {
 header {
 	background: #484848;
 	box-shadow: 0px 1px 3px black;
+	height: 26px;
 }
 
 main {
-	position: relative;
-	height: 100%;
+	position: absolute;
+	top: 26px;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
 }
 
 nav {
@@ -130,8 +135,9 @@ nav a.customizeLink.streamLink.active {
 	white-space: nowrap;
 }
 
-.window .title > span {
+.window .title .stream-name {
 	float: left;
+	cursor: default;
 }
 
 .window .ui-icon-gripsmall-diagonal-se {
@@ -218,18 +224,18 @@ input[type=text], textarea {
 	position: relative;
 	height: 100%;
 	overflow: hidden;
-	font-size: 0.83em;
+	font-size: 0.8em;
 }
 
 .shoutbox-title {
 	position: absolute;
-	float: none;
 	top: 0;
 	left: 0;
 	right: 0;
 	font-weight: bold;
 	text-align: center;
 	white-space: nowrap;
+	pointer-events: none;
 }
 
 .shoutbox-items-container {
@@ -239,8 +245,9 @@ input[type=text], textarea {
     left: 0;
     right: 3px;
     top: 0px;
-    bottom: 35px;
+    bottom: 23px;
 	padding: 3px 0px 0px;
+	font-size: 0.87em;
 }
 
 .shoutbox-inputbox {
@@ -248,14 +255,39 @@ input[type=text], textarea {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	height: 30px;
+	height: 20px;
 	white-space: nowrap;
 	overflow: hidden;
 	padding: 0px 7px;
 }
 
-.shoutbox-inputbox input[type=text] {
+.shoutbox-input-holder {
+	position: absolute;
+	left: 5px;
+	right: 95px;
+	top: 0px;
+	bottom: 3px;
+}
 
+.shoutbox input {
+	background-color: #eee;
+	border-radius: 2px;
+}
+
+.shoutbox-input-holder input {
+	width: 100%;
+}
+
+.shoutbox-name {
+	position: absolute;
+	top: 0px;
+	right: 3px;
+	bottom: 0;
+	font-size: 0.9em;
+}
+
+.shoutbox-name input {
+	width: 45px;
 }
 
 .shoutbox-item {	
@@ -263,5 +295,17 @@ input[type=text], textarea {
 	border-radius: 3px;
 	border: 1px solid #5b5b5b;
 	padding: 3px;
-	background-color: #747474;
+	background-color: #717171;
+}
+
+.shoutbox-item:nth-child(odd) {
+    background-color: #6A6A6A;
+}
+
+.shouter-name {
+	font-weight: bold;
+}
+
+.shout-time {
+    color: #111;
 }

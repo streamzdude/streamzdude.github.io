@@ -24,10 +24,12 @@
 	<!-- ko foreach: windows -->
 		<div class="window" data-bind="window: $data, visible: true" style="display:none">
 			<div class="title">
-				<span data-bind="text: stream.name"></span>
+				<span class="stream-name" data-bind="text: stream.name"></span>
+				<!-- ko if: stream.type() !== 'shoutbox' -->
 				<a href="#" data-bind="visible: $root.showReload, click: $root.reloadWindow" class="ui-icon ui-icon-arrowrefresh-1-e titleBtn" title="Reload" style="margin-left: 3px"></a>
 				<a href="#" data-bind="visible: $root.showLocks, click: toggleLock, 
 					css: {'ui-icon-locked': aspectRatioLocked, 'ui-icon-unlocked': !aspectRatioLocked()}" class="ui-icon titleBtn" title="Lock aspect ratio"></a>
+				<!-- /ko -->
 			</div>			
 			<a href="#" data-bind="click: $root.closeWindow" class="ui-icon ui-icon-close closeBtn" title="Close"></a>
 			<div class="player"></div>
@@ -90,17 +92,23 @@
 </div>
 
 <script type="text/html" id="shoutbox-template">
-	<div class="shoutbox">
-		<div class="shoutbox-items-container" data-bind="foreach: $parent.shoutboxItems">
-			<div class="shoutbox-item">
-				z
+	<div class="shoutbox" data-bind="with: $parent.shoutbox">
+		<div class="shoutbox-items-container" data-bind="foreach: items">
+			<div class="shoutbox-item no-drag">				
+				<span class="shouter-name" data-bind="text: name + ':'"></span>
+				<span class="shout-msg" data-bind="text: msg"></span>
+				<span class="shout-time">(<span data-bind="timeago: time"></span>)</span>
 			</div>
 		</div>
 		<div class="shoutbox-inputbox">
-			<input type="text"/>
-			<button>Send</button>
-			Name:
-			<input type="text"/>
+			<div class="shoutbox-input-holder">
+				<input type="text" data-bind="textInput: message, event: {keypress: onKeyPress}, hasFocus: true" 
+					   maxlength="300" autofocus placeholder="type here to shout" />
+			</div>
+			<div class="shoutbox-name">
+				name:
+				<input type="text" data-bind="textInput: name" />
+			</div>
 		</div>
 	</div>
 </script>
