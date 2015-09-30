@@ -604,7 +604,7 @@ firebase.child("admin").on("value", function(snapshot) {
 });
 
 
-firebase.child("news").on("value", function(snapshot) {
+firebase.child("news").limitToLast(10).on("value", function(snapshot) {
 	var items = snapshot.val();
 	if (!items) return;
 	items = Object.keys(items).map(function(key) { return items[key]; });
@@ -613,7 +613,7 @@ firebase.child("news").on("value", function(snapshot) {
 });
 
 
-firebase.child("shoutbox").on("value", function(snapshot) {	
+firebase.child("shoutbox").limitToLast(100).on("value", function(snapshot) {	
 	var items = snapshot.val();
 	if (!items) return;
 	items = Object.keys(items).map(function(key) { return items[key]; });
