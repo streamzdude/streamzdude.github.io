@@ -9,6 +9,7 @@ function Stream(stream) {
 	this.name = ko.observable(stream.name);
 	this.type = ko.observable(stream.type);
 	this.src = ko.observable(stream.src);
+	this.isServerStream = ko.observable(false);
 
 	this.save = function() {
 		var stream = {
@@ -157,6 +158,19 @@ function StreamzVM() {
 
 		open: function() { $('#editStreamDlg').dialog('open') },
 		close: function() { $('#editStreamDlg').dialog('close') },
+		remove: function() {
+			var stream = this.origStream();
+			if (!stream) return;
+			if (!confirm('Are you sure you want to remove the stream "' + stream.name() + '"?')) return;
+
+			if (stream.window()) {
+				self.windows.remove(stream.window());
+			}
+
+			self.streams.remove(stream);
+			self.save();
+			this.close();
+		},
 		ok: function() {
 			if (this.origStream()) { // editing existing stream
 				var stream = this.origStream();
@@ -607,7 +621,7 @@ firebase.child("admin").on("value", function(snapshot) {
 	vm.streams().forEach(function(vmStream) {
 		var serverStream = data.streams[vmStream.name()];
 		if (serverStream) {
-			vmStream.type(serverStream.type).src(serverStream.src);
+			vmStream.type(serverStream.type).src(serverStream.src).isServerStream(true);
 			delete data.streams[vmStream.name()];
 		}
 	});
