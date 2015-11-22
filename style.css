@@ -78,24 +78,32 @@ nav a.streamLink:hover {
 	color: white;
 }
 
-nav a.customizeLink {
+
+nav a.buttonLink {
 	margin-right: 15px;
 	text-indent: -99999px;
 	background-color: #999;
 	background-image: url(images/ui-icons_222222_256x240.png);	
-	background-position: -176px -111px;
 	color: transparent;
 	height: 20px;
 	overflow: visible;
 	padding-left: 7px;
 }
 
-nav a.customizeLink:hover {
+nav a.customizeLink {
+	background-position: -176px -111px;
+}
+
+nav a.buttonLink:hover {
 	background-color: #ddd;
 }
 
-nav a.customizeLink.streamLink.active {
+nav a.buttonLink.streamLink.active {
 	box-shadow: 0px 0px 3px 1px rgba(255, 255, 173, 0.85);
+}
+
+nav a.tileLink {
+	background-position: -176px -128px;
 }
 
 .window {

@@ -90,6 +90,20 @@ function StreamzVM() {
 		self.showNews(false);
 	};
 
+	this.tileWindows = function() {
+		var oldPositions = self.windows().map(function(window) {
+			return {
+				name: window.stream.name(),
+				left: window.left(),
+				top: window.top(),
+				width: window.width(),
+				height: window.height()
+			};
+		});
+
+		
+	};
+
 	var shoutboxName;
 	if (localStorage["streamzShoutboxName"])
 		shoutboxName = localStorage["streamzShoutboxName"];
@@ -420,13 +434,18 @@ var timeagoTimer;
 var numTimeago = 0;
 
 function timeagoUpdate() {
-	$('.timeago').text(function() {
-		return timeago( $(this).data('timestamp') );
+	$('.timeago').each(function() {
+		var el = $(this);
+		var from = el.text();
+		var to = timeago( el.data('timestamp') );
+		if (from !== to) {
+			el.text( to );
+		}
 	});
 }
 
 ko.bindingHandlers.timeago = {
-	init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+	init: function(element, valueAccessor) {
 		var timestamp = ko.unwrap( valueAccessor() );
 		var elem = $(element);
 
@@ -435,7 +454,7 @@ ko.bindingHandlers.timeago = {
 			.text( timeago(timestamp) )
 
 		if (numTimeago === 0) {
-			timeagoTimer = setInterval(timeagoUpdate, 30000);
+			timeagoTimer = setInterval(timeagoUpdate, 60000);
 		}
 		numTimeago++;
 
@@ -448,6 +467,11 @@ ko.bindingHandlers.timeago = {
 				timeagoTimer = null;
 			}
 		});
+	},
+	update: function(element, valueAccessor) {
+		var timestamp = ko.unwrap( valueAccessor() );
+		$(element).data('timestamp', timestamp)
+				  .text( timeago(timestamp) );
 	}
 };
 
