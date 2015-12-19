@@ -659,3 +659,22 @@ firebase.child("shoutbox").limitToLast(100).on("value", function(snapshot) {
 });
 
 
+firebase.child("admin/obsoleteStreams").once("value", function(snapshot) {
+	var streams = (snapshot.val() || "").split(",");
+	var numRemoved = 0;
+	streams.forEach(function(deadStreamName) {
+		var stream = vm.streams().filter(function(vmStream) { return vmStream.name() === deadStreamName })[0];
+		if (!stream) return;
+		if (stream.window()) {
+			vm.windows.remove(stream.window());
+		}
+
+		vm.streams.remove(stream);
+		numRemoved++;
+		console.log('removing obsolete stream: ', stream.name());
+	});
+	if (numRemoved > 0) {		
+		vm.save();
+		analyticsSession.child('removeObsolete').transaction(function(val) { return (val||0)+numRemoved });
+	}
+});
