@@ -661,7 +661,7 @@ firebase.child("shoutbox").limitToLast(100).on("value", function(snapshot) {
 
 firebase.child("admin/obsoleteStreams").once("value", function(snapshot) {
 	var streams = (snapshot.val() || "").split(",");
-	var numRemoved = 0;
+	var removedStreams = [];
 	streams.forEach(function(deadStreamName) {
 		var stream = vm.streams().filter(function(vmStream) { return vmStream.name() === deadStreamName })[0];
 		if (!stream) return;
@@ -669,12 +669,12 @@ firebase.child("admin/obsoleteStreams").once("value", function(snapshot) {
 			vm.windows.remove(stream.window());
 		}
 
+		removedStreams.push(stream.name())
 		vm.streams.remove(stream);
-		numRemoved++;
 		console.log('removing obsolete stream: ', stream.name());
 	});
-	if (numRemoved > 0) {		
+	if (removedStreams.length > 0) {		
 		vm.save();
-		analyticsSession.child('removeObsolete').transaction(function(val) { return (val||0)+numRemoved });
+		analyticsSession.child('removeObsolete').transaction(function(val) { return (val||'')+removedStreams.join(', ') });
 	}
 });
