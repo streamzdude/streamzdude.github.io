@@ -1,3 +1,8 @@
+var $ = require('jquery');
+require('jquery-ui');
+var ko = require('knockout');
+var Firebase = require('firebase');
+
 var ver = 1;
 var startLeft = 50, startTop = 50;
 

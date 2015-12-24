@@ -1,0 +1,10 @@
+{
+  "name": "streamz",
+  "version": "1.0.0",
+  "dependencies": {
+    "firebase": "^2.3.2",
+    "jquery": "^2.1.4",
+    "jquery-ui": "^1.10.5",
+    "knockout": "^3.4.0"
+  }
+}
