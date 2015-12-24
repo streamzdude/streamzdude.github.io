@@ -356,10 +356,24 @@ function winJwplayer(elem, stream)
 	});
 }
 
-function winIframe(elem, stream)
+function winYoutube(elem, src) {
+	console.log(src);
+	if (src.indexOf('http') === 0) {
+		src = src.slice(src.lastIndexOf('/') + 1);
+		if (src.indexOf('watch?v=') === 0)
+			src = src.slice(8);
+		else if (src.indexOf('?') > 0)
+			src = src.slice(0, src.indexOf('?'));
+
+	}
+	src = 'https://www.youtube.com/embed/' + src + '?rel=0';
+	winIframe(elem, src);
+}
+
+function winIframe(elem, src)
 {
 	$('<iframe webkitallowfullscreen="true" height="100%" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" />')
-		.prop('src', stream.src())
+		.prop('src', src)
 		.appendTo(elem);
 }
 
@@ -540,7 +554,8 @@ ko.bindingHandlers.window = {
 
 		switch (stream.type()) {
 			case 'jwplayer': winJwplayer(playerDiv, stream); break;
-			case 'iframe': winIframe(playerDiv, stream); break;
+			case 'iframe': winIframe(playerDiv, stream.src()); break;
+			case 'youtube': winYoutube(playerDiv, stream.src()); break;
 			case 'html': playerDiv.append( stream.src() ); break;
 			case 'shoutbox': winShoutbox(elem); break;
 		}
