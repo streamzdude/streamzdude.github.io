@@ -1,3 +1,2 @@
-*build command*
-
-browserify script.js | uglifyjs -mc > bundle.js
+# build command
+`browserify script.js | uglifyjs -mc > bundle.js`
