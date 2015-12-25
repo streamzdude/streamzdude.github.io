@@ -357,7 +357,6 @@ function winJwplayer(elem, stream)
 }
 
 function winYoutube(elem, src) {
-	console.log(src);
 	if (src.indexOf('http') === 0) {
 		src = src.slice(src.lastIndexOf('/') + 1);
 		if (src.indexOf('watch?v=') === 0)
