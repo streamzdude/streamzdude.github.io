@@ -349,6 +349,7 @@ function winJwplayer(elem, stream)
 	    image: stream.image === false ? undefined : 'bomb.png',
 	    width: '100%',
 	    aspectratio: '16:9',
+	    autostart: true,
 	    rtmp: {
 	    	subscribe: true,
 	    	bufferlength: stream.bufferlength || 10
@@ -697,3 +698,5 @@ firebase.child("admin/obsoleteStreams").once("value", function(snapshot) {
 		analyticsSession.child('removeObsolete').transaction(function(val) { return (val||'')+removedStreams.join(', ') });
 	}
 });
+
+//  browserify script.js | uglifyjs -mc > bundle.js
