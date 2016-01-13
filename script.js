@@ -366,13 +366,13 @@ function winYoutube(elem, src) {
 			src = src.slice(0, src.indexOf('?'));
 
 	}
-	src = 'https://www.youtube.com/embed/' + src + '?rel=0';
+	src = 'https://www.youtube.com/embed/' + src + '?rel=0&autoplay=1&showinfo=1';
 	winIframe(elem, src);
 }
 
 function winIframe(elem, src)
 {
-	$('<iframe webkitallowfullscreen="true" height="100%" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" />')
+	$('<iframe allowfullscreen webkitallowfullscreen="true" height="100%" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" />')
 		.prop('src', src)
 		.appendTo(elem);
 }
