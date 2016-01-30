@@ -229,6 +229,15 @@ function StreamzVM() {
 		self.editedStream.open();
 	}
 
+	this.windowBtnClicked = function(stream, e) {
+		if (e.ctrlKey) {
+			self.editStream(stream);
+		}
+		else {
+			self.toggleWindow(stream);
+		}
+	}
+
 	this.toggleWindow = function(stream) {
 		var win = self.windows().filter(function(wind) { return wind.stream === stream })[0];
 		if (win) {
@@ -699,4 +708,3 @@ firebase.child("admin/obsoleteStreams").once("value", function(snapshot) {
 	}
 });
 
-//  browserify script.js | uglifyjs -mc > bundle.js
