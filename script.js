@@ -6,6 +6,8 @@ var Firebase = require('firebase');
 var ver = 1;
 var startLeft = 50, startTop = 50;
 
+var playerDiffW = 3+3, playerDiffH = 15+3;
+
 function Stream(stream) {
 	var self = this;
 	$.extend(this, stream);
@@ -396,6 +398,10 @@ function winShoutbox(elem) {
 	}, 0);
 }
 
+function isNumber(value) {
+	return !isNaN(parseInt(value, 10));
+}
+
 // allow changing resizable's "aspectRatio" option after initialization (http://bugs.jqueryui.com/ticket/4186)
 var oldSetOption = $.ui.resizable.prototype._setOption;
 $.ui.resizable.prototype._setOption = function(key, value) {
@@ -405,6 +411,34 @@ $.ui.resizable.prototype._setOption = function(key, value) {
     }
 };
 
+$.ui.resizable.prototype._updateRatio = function( data ) {
+	var cpos = this.position,
+		csize = this.size,
+		a = this.axis,
+		pHeight, pWidth,
+		playerRatio = this.playerAspectRatio;
+    
+	if (isNumber(data.height)) {
+  		var pHeight = data.height - playerDiffH;
+    	var pWidth = pHeight * playerRatio;
+    	data.width = pWidth + playerDiffW;
+	} else if (isNumber(data.width)) {
+  		var pWidth = data.width - playerDiffW;
+    	var pHeight = pWidth / playerRatio;
+    	data.height = pHeight + playerDiffH;
+	}
+
+	if (a === "sw") {
+		data.left = cpos.left + (csize.width - data.width);
+		data.top = null;
+	}
+	if (a === "nw") {
+		data.top = cpos.top + (csize.height - data.height);
+		data.left = cpos.left + (csize.width - data.width);
+	}
+
+	return data;
+}
 
 var timeagoSettings = {
       allowFuture: false,
@@ -552,7 +586,11 @@ ko.bindingHandlers.window = {
 		elem.resizable({
 			handles: 'all',
 			aspectRatio: window.aspectRatioLocked(),
-			start: function() {	vm.showOverlay(true) },
+			start: function(e, ui) {
+				$.data(this, 'ui-resizable').playerAspectRatio = playerDiv.width() / playerDiv.height();
+				//$.data(this,'ui-resizable').playerAspectRatio = (ui.size.width - playerDiffW)/ (ui.size.height - playerDiffH);
+				vm.showOverlay(true);
+			},
 			stop: function() {
 				vm.showOverlay(false);
 				var pos = elem.position();
