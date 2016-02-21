@@ -9,9 +9,11 @@
   },
   "devDependencies": {
     "browserify": "^13.0.0",
+    "watchify": "^3.7.0",
     "uglify-js": "^2.6.1"
   },
   "scripts": {
-    "build": "browserify script.js | uglifyjs -mc > bundle.js"
+    "build": "browserify script.js | uglifyjs -mc > bundle.js",
+    "watch": "watchify script.js -o bundle.js --debug --verbose"
   }
 }
