@@ -12,13 +12,11 @@
 
 
 <header>
-	<nav>
-		<a href="#" class="streamLink buttonLink customizeLink" data-bind="click: toggleCustomize, css: {active: isCustomizing}" title="Customize">A</a>
-		<!--a href="#" class="streamLink buttonLink tileLink" data-bind="click: tileWindows" title="Tile windows">A</a-->
-		<!-- ko foreach: visibleStreams -->
-			<a href="#" class="streamLink" data-bind="click: $root.windowBtnClicked, text: name, css: {active: window}"></a>
-		<!-- /ko -->
-	</nav>
+	<a href="#" class="streamLink buttonLink customizeLink" data-bind="click: toggleCustomize, css: {active: isCustomizing}" title="Customize">A</a>
+	<!--a href="#" class="streamLink buttonLink tileLink" data-bind="click: tileWindows" title="Tile windows">A</a-->
+	<!-- ko foreach: visibleStreams -->
+		<a href="#" class="streamLink" data-bind="click: $root.windowBtnClicked, text: name, css: {active: window}"></a>
+	<!-- /ko -->
 </header>
 
 <main>

@@ -42,23 +42,43 @@ header {
 	background: #484848;
 	box-shadow: 0px 1px 3px black;
 	height: 26px;
+	padding: 0px 3px;
+	font-size: 0.9em;
+	transition: all 0.8s ease-out;
+}
+
+/*
+header:after {
+	content: '^';
+	color: #ccc;
+	position: absolute;
+	top: 26px;
+	right: 0;
+	background-color: #777;
+	border-radius: 2px;
+	z-index: -1;
+}
+*/
+
+header.hidden {
+	margin-top: -26px;
 }
 
 main {
 	position: absolute;
 	top: 26px;
+	bottom: 0;
 	left: 0;
 	right: 0;
-	bottom: 0;
-	overflow: hidden;
+	transition: all 0.8s ease-out;
 }
 
-nav {
-	padding: 0px 3px;
-	font-size: 0.9em;
+header.hidden ~ main {
+	top: 0px;
 }
 
-nav a.streamLink {
+
+header a.streamLink {
 	color: #aaa;
 	background-color: #222;
 	text-decoration: none;
@@ -69,17 +89,17 @@ nav a.streamLink {
 	padding: 2px 10px;
 }
 
-nav a.streamLink.active {
+header a.streamLink.active {
 	color: #c6c6c6;
 	box-shadow: 0px 0px 3px 1px rgba(230,230,150,0.7);
 }
 
-nav a.streamLink:hover {
+header a.streamLink:hover {
 	color: white;
 }
 
 
-nav a.buttonLink {
+header a.buttonLink {
 	margin-right: 15px;
 	text-indent: -99999px;
 	background-color: #999;
@@ -90,19 +110,19 @@ nav a.buttonLink {
 	padding-left: 7px;
 }
 
-nav a.customizeLink {
+header a.customizeLink {
 	background-position: -176px -111px;
 }
 
-nav a.buttonLink:hover {
+header a.buttonLink:hover {
 	background-color: #ddd;
 }
 
-nav a.buttonLink.streamLink.active {
+header a.buttonLink.streamLink.active {
 	box-shadow: 0px 0px 3px 1px rgba(255, 255, 173, 0.85);
 }
 
-nav a.tileLink {
+header a.tileLink {
 	background-position: -176px -128px;
 }
 
