@@ -43,11 +43,15 @@ function Window(stream) {
 	this.stream = stream;
 	this.left = ko.observable(startLeft);
 	this.top = ko.observable(startTop);
-	startLeft = (startLeft + 50) % 400; startTop = (startTop + 50) % 400;
-	this.width = ko.observable(stream.width || 600);
-	this.height = ko.observable(stream.height || 345);
+	var initWidth = stream.width || (stream.type() === 'youtube' ? 587 : 600);
+	var initHeight = stream.height || 345;
+	this.width = ko.observable(initWidth);
+	this.height = ko.observable(initHeight);
 	this.zIndex = ko.observable(0);
 	this.aspectRatioLocked = ko.observable(false);
+
+	startLeft = (startLeft + 50) % 400; 
+	startTop = (startTop + 50) % 400;
 
 	this.toggleLock = function() {
 		self.aspectRatioLocked(!self.aspectRatioLocked());
