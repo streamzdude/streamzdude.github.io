@@ -106,12 +106,25 @@ function StreamzVM() {
 		var windows = $('.window');
 		if (windows.length === 0) return;
 		var main = $('main');
-		var width = main.width() / windows.length;
-		var height = main.height();
+		var rowsCols = [[1,1],[1,2],[1,3],[2,2],[2,3],[2,3],[3,3],[3,3],[3,3],[4,3],[4,3],[4,3],[4,4],[4,4],[4,4],[4,4],[5,4],[5,4],[5,4],[5,4]];
+		var rows, cols;
+		if (windows.length > rowsCols.length) {
+			rows = 5; cols = 5;
+		}
+		else {
+			rows = rowsCols[windows.length - 1][0];
+			cols = rowsCols[windows.length - 1][1];
+		}
+
+		var width = main.width() / cols;
+		var height = main.height() / rows;
 
 		windows.each(function(i, elem) {
-			var win = ko.dataFor(elem);
-			win.top(0).height(height).left(i * width).width(width);			
+			var win = ko.dataFor(elem);				
+
+			win.top(Math.floor(i / (cols))  * height).height(height)
+			   .left((i % cols) * width).width(width);
+
 			$(elem).css({
 				left: win.left() + 'px',
 				top: win.top() + 'px',
