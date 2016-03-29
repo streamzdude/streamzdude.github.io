@@ -21,7 +21,7 @@
 
 <main>
 	<!-- ko foreach: windows -->
-		<div class="window" data-bind="window: $data, visible: true" style="display:none">
+		<div class="window" data-bind="window: $data, visible: true, event: {dblclick: $root.tileWindows}" style="display:none">
 			<div class="title">
 				<span class="stream-name" data-bind="text: stream.name"></span>
 				<!-- ko if: stream.type() !== 'shoutbox' -->

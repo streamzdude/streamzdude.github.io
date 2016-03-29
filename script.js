@@ -103,17 +103,24 @@ function StreamzVM() {
 	};
 
 	this.tileWindows = function() {
-		var oldPositions = self.windows().map(function(window) {
-			return {
-				name: window.stream.name(),
-				left: window.left(),
-				top: window.top(),
-				width: window.width(),
-				height: window.height()
-			};
+		var windows = $('.window');
+		if (windows.length === 0) return;
+		var main = $('main');
+		var width = main.width() / windows.length;
+		var height = main.height();
+
+		windows.each(function(i, elem) {
+			var win = ko.dataFor(elem);
+			win.top(0).height(height).left(i * width).width(width);			
+			$(elem).css({
+				left: win.left() + 'px',
+				top: win.top() + 'px',
+				width: win.width() + 'px',
+				height: win.height() + 'px'
+			});
 		});
 
-		
+		self.save();
 	};
 
 	var shoutboxName;
@@ -295,7 +302,7 @@ function StreamzVM() {
 		if (i < self.streams().length-1) {
 			self.streams.splice(i, 1);
 			self.streams.splice(i+1, 0, stream);
-		}
+		}		
 	}
 
 	this.save = function() {
@@ -749,4 +756,5 @@ firebase.child("admin/obsoleteStreams").once("value", function(snapshot) {
 		analyticsSession.child('removeObsolete').transaction(function(val) { return (val||'')+removedStreams.join(', ') });
 	}
 });
+
 
