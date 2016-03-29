@@ -118,6 +118,7 @@ function StreamzVM() {
 
 		var width = main.width() / cols;
 		var height = main.height() / rows;
+		$('body').addClass('animateWindows');
 
 		windows.each(function(i, elem) {
 			var win = ko.dataFor(elem);				
@@ -134,6 +135,10 @@ function StreamzVM() {
 		});
 
 		self.save();
+		setTimeout(function() {
+			$('body').removeClass('animateWindows');
+		}, 1200);
+
 	};
 
 	var shoutboxName;

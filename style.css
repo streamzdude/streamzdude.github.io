@@ -135,6 +135,10 @@ header a.tileLink {
 	overflow:hidden;
 }
 
+body.animateWindows .window {
+	transition: all 1s ease-in-out;
+}
+
 .window .player, .window .overlay {
 	position: absolute;
 	top: 15px;
