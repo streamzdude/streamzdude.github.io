@@ -1,5 +1,6 @@
 var $ = require('jquery');
 var ko = require('knockout');
+var fetchIP = require('./fetch-ip');
 
 module.exports = createShoutbox;
 
@@ -21,15 +22,17 @@ function createShoutbox(firebase, analyticsSession) {
 			if (shoutbox.message().trim().length === 0 || 
 				shoutbox.name().trim().length === 0) return true;
 
-			firebase.child("shoutbox").push({
-				msg: shoutbox.message(),
-				name: shoutbox.name(),
-				time: Firebase.ServerValue.TIMESTAMP,
-				sessionId: analyticsSession.key(),
-				ip: ip
-			});
+			fetchIP.then(function(ipData) {
+				firebase.child("shoutbox").push({
+					msg: shoutbox.message(),
+					name: shoutbox.name(),
+					time: Firebase.ServerValue.TIMESTAMP,
+					sessionId: analyticsSession.key(),
+					ip: ipData.ip
+				});
 
-			shoutbox.message('');
+				shoutbox.message('');
+			});
 		}
 	};
 

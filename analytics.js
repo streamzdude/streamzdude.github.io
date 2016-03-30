@@ -1,5 +1,5 @@
-var $ = require('jquery');
 var Firebase = require('firebase');
+var fetchIP = require('./fetch-ip');
 
 var noAnalytics = localStorage['no-analytics'] === 'true';
 
@@ -18,16 +18,12 @@ module.exports = function initAnalytics(firebase) {
 		});
 		session.onDisconnect().update({ended: Firebase.ServerValue.TIMESTAMP});
 
-		$.getJSON('http://ip-api.com/json').done(function(data) {
-			ip = data.query;
-			session.update({ipData:data, ip: ip});
-		}).fail(function() {
-			$.get('http://icanhazip.com').done(function(data) {
-				ip = data.trim();
-				session.update({ip: ip});
-			});
+		fetchIP.then(function(data) {
+			session.update(data);
 		});
 
 		return session;
 	}
 }
+
+
