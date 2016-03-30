@@ -2,11 +2,12 @@ var $ = require('jquery');
 require('jquery-ui');
 var ko = require('knockout');
 var Firebase = require('firebase');
+var initAnalytics = require('./analytics');
+var createShoutbox = require('./shoutbox');
+require('./timeago');
+require('./jquery-ui-extensions');
 
 var ver = 1;
-var startLeft = 50, startTop = 50;
-
-var playerDiffW = 3+3, playerDiffH = 15+3;
 
 function Stream(stream) {
 	var self = this;
@@ -33,6 +34,8 @@ function Stream(stream) {
 		return stream;
 	};
 }
+
+var startLeft = 50, startTop = 50; // windows initial position
 
 function Window(stream) {
 	var self = this;
@@ -71,7 +74,9 @@ function Window(stream) {
 	}
 
 	this.load = function(data) {
-		self.left(data.left).top(data.top).width(data.width).height(data.height).zIndex(data.zIndex).aspectRatioLocked(!!data.aspectRatioLocked);
+		self.left(data.left).top(data.top).width(data.width).height(data.height)
+			.zIndex(data.zIndex)
+			.aspectRatioLocked(!!data.aspectRatioLocked);
 	}
 }
 
@@ -90,6 +95,8 @@ function StreamzVM() {
 	this.showReload = ko.observable(true);
 	this.showLocks = ko.observable(true);
 
+	this.shoutbox = createShoutbox(firebase, analyticsSession);
+
 	this.newsItems = ko.observable([]);
 	this.showNews = ko.observable(false);
 	this.newsVisible = ko.computed(function() {
@@ -103,6 +110,7 @@ function StreamzVM() {
 	};
 
 	this.tileWindows = function() {
+		// TODO: make this less gross & more flexible:		
 		var windows = $('.window');
 		if (windows.length === 0) return;
 		var main = $('main');
@@ -140,51 +148,6 @@ function StreamzVM() {
 		}, 1200);
 
 	};
-
-	var shoutboxName;
-	if (localStorage["streamzShoutboxName"])
-		shoutboxName = localStorage["streamzShoutboxName"];
-	else {
-		localStorage["streamzShoutboxName"] = shoutboxName = ('anon' + Math.floor(Math.random()*1000));
-	}
-
-	this.shoutbox = {
-		items: ko.observableArray([]),
-		message: ko.observable(''),
-		name: ko.observable(shoutboxName)
-			    .extend({rateLimit: {method: "notifyWhenChangesStop", timeout: 300}}),
-		onKeyPress: function(data, event) {
-			if (event.which !== 13) return true;
-			if (self.shoutbox.message().trim().length === 0 || 
-				self.shoutbox.name().trim().length === 0) return true;
-
-			firebase.child("shoutbox").push({
-				msg: self.shoutbox.message(),
-				name: self.shoutbox.name(),
-				time: Firebase.ServerValue.TIMESTAMP,
-				sessionId: analyticsSession.key(),
-				ip: ip
-			});
-
-			self.shoutbox.message('');
-		}
-	};
-
-	// scroll shoutbox to bottom when items are updated:
-	this.shoutbox.items.subscribe(function() {
-		var container = $('.shoutbox-items-container')[0];
-		if (!container) return;
-
-		var isScrolledToBottom = container.scrollHeight - container.clientHeight <= container.scrollTop + 1;
-		setTimeout(function() {
-			if (isScrolledToBottom) 
-        		container.scrollTop = container.scrollHeight - container.clientHeight;
-		}, 0);
-	});
-
-	this.shoutbox.name.subscribe(function(name) {		
-		localStorage["streamzShoutboxName"] = shoutboxName = name;
-	});
 
 	this.editedStream = {
 		origStream: ko.observable(null),
@@ -427,158 +390,7 @@ function winShoutbox(elem) {
 	}, 0);
 }
 
-function isNumber(value) {
-	return !isNaN(parseInt(value, 10));
-}
 
-// allow changing resizable's "aspectRatio" option after initialization (http://bugs.jqueryui.com/ticket/4186)
-var oldSetOption = $.ui.resizable.prototype._setOption;
-$.ui.resizable.prototype._setOption = function(key, value) {
-    oldSetOption.apply(this, arguments);
-    if (key === "aspectRatio") {
-        this._aspectRatio = !!value;
-    }
-};
-
-$.ui.resizable.prototype._updateRatio = function( data ) {
-	var cpos = this.position,
-		csize = this.size,
-		a = this.axis,
-		pHeight, pWidth,
-		playerRatio = this.playerAspectRatio;
-    
-	if (isNumber(data.height)) {
-  		var pHeight = data.height - playerDiffH;
-    	var pWidth = pHeight * playerRatio;
-    	data.width = pWidth + playerDiffW;
-	} else if (isNumber(data.width)) {
-  		var pWidth = data.width - playerDiffW;
-    	var pHeight = pWidth / playerRatio;
-    	data.height = pHeight + playerDiffH;
-	}
-
-	if (a === "sw") {
-		data.left = cpos.left + (csize.width - data.width);
-		data.top = null;
-	}
-	if (a === "nw") {
-		data.top = cpos.top + (csize.height - data.height);
-		data.left = cpos.left + (csize.width - data.width);
-	}
-
-	return data;
-}
-
-var timeagoSettings = {
-      allowFuture: false,
-      strings: {
-        prefixAgo: null,
-        prefixFromNow: null,
-        suffixAgo: "ago",
-        suffixFromNow: "from now",
-        inPast: 'any moment now',
-        seconds: "less than a minute",
-        minute: "about a minute",
-        minutes: "%d minutes",
-        hour: "about an hour",
-        hours: "about %d hours",
-        day: "a day",
-        days: "%d days",
-        month: "about a month",
-        months: "%d months",
-        year: "about a year",
-        years: "%d years",
-        wordSeparator: " ",
-        numbers: []
-      }
-};
-
-function timeago(timestamp) {   
-    var distanceMillis = Date.now() - timestamp;
-    var $l = timeagoSettings.strings;
-    var prefix = $l.prefixAgo;
-    var suffix = $l.suffixAgo;
-    if (timeagoSettings.allowFuture) {
-        if (distanceMillis < 0) {
-            prefix = $l.prefixFromNow;
-            suffix = $l.suffixFromNow;
-        }
-    }
-
-    var seconds = Math.abs(distanceMillis) / 1000;
-    var minutes = seconds / 60;
-    var hours = minutes / 60;
-    var days = hours / 24;
-    var years = days / 365;
-
-    function substitute(stringOrFunction, number) {
-        var string = typeof stringOrFunction === 'function' ? stringOrFunction(number, distanceMillis) : stringOrFunction;
-        var value = ($l.numbers && $l.numbers[number]) || number;
-        return string.replace(/%d/i, value);
-    }
-
-    var words = seconds < 45 && substitute($l.seconds, Math.round(seconds)) ||
-        seconds < 90 && substitute($l.minute, 1) ||
-        minutes < 45 && substitute($l.minutes, Math.round(minutes)) ||
-        minutes < 90 && substitute($l.hour, 1) ||
-        hours < 24 && substitute($l.hours, Math.round(hours)) ||
-        hours < 42 && substitute($l.day, 1) ||
-        days < 30 && substitute($l.days, Math.round(days)) ||
-        days < 45 && substitute($l.month, 1) ||
-        days < 365 && substitute($l.months, Math.round(days / 30)) ||
-        years < 1.5 && substitute($l.year, 1) ||
-        substitute($l.years, Math.round(years));
-
-    var separator = $l.wordSeparator || "";
-    if ($l.wordSeparator === undefined) { separator = " "; }
-    return [prefix, words, suffix].join(separator).trim()
-}
-
-
-var timeagoTimer;
-var numTimeago = 0;
-
-function timeagoUpdate() {
-	$('.timeago').each(function() {
-		var el = $(this);
-		var from = el.text();
-		var to = timeago( el.data('timestamp') );
-		if (from !== to) {
-			el.text( to );
-		}
-	});
-}
-
-ko.bindingHandlers.timeago = {
-	init: function(element, valueAccessor) {
-		var timestamp = ko.unwrap( valueAccessor() );
-		var elem = $(element);
-
-		elem.addClass('timeago')
-			.data('timestamp', timestamp)			
-			.text( timeago(timestamp) )
-
-		if (numTimeago === 0) {
-			timeagoTimer = setInterval(timeagoUpdate, 60000);
-		}
-		numTimeago++;
-
-		ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-			elem.removeClass('timeago')
-				.removeData('timestamp');
-			numTimeago--;
-			if (numTimeago === 0) {
-				clearInterval(timeagoTimer);
-				timeagoTimer = null;
-			}
-		});
-	},
-	update: function(element, valueAccessor) {
-		var timestamp = ko.unwrap( valueAccessor() );
-		$(element).data('timestamp', timestamp)
-				  .text( timeago(timestamp) );
-	}
-};
 
 ko.bindingHandlers.window = {
 	init: function(element, valueAccessor, allBindings, viewModel, bindingContext)
@@ -617,7 +429,6 @@ ko.bindingHandlers.window = {
 			aspectRatio: window.aspectRatioLocked(),
 			start: function(e, ui) {
 				$.data(this, 'ui-resizable').playerAspectRatio = playerDiv.width() / playerDiv.height();
-				//$.data(this,'ui-resizable').playerAspectRatio = (ui.size.width - playerDiffW)/ (ui.size.height - playerDiffH);
 				vm.showOverlay(true);
 			},
 			stop: function() {
@@ -656,49 +467,82 @@ ko.bindingHandlers.window = {
 }
 
 
-
 $('#editStreamDlg').dialog({
 	autoOpen: false,
 	width: 400
 });
 
 
+function fetchUpdates() {
+	firebase.child("admin").on("value", function(snapshot) {
+		var data = snapshot.val();
 
-
-
-function initAnalytics() {
-	firebase.child('stats/hits').transaction(function(i){ return (i||0)+1 });
-	if (noAnalytics) {
-		var o = {child: f, transaction: f, update: f, push: f, set: f, key: function(){ return 'no-analytics' }};
-		function f() { return o }
-		return o;
-	}
-	else {
-		var session = firebase.child('stats/sessions').push();
-		session.update({
-				browserDate: new Date().toString(),
-				started: Firebase.ServerValue.TIMESTAMP
+		vm.streams().forEach(function(vmStream) {
+			var serverStream = data.streams[vmStream.name()];
+			if (serverStream) {
+				vmStream.type(serverStream.type).src(serverStream.src).isServerStream(true);
+				delete data.streams[vmStream.name()];
+			}
 		});
-		session.onDisconnect().update({ended: Firebase.ServerValue.TIMESTAMP});
 
-		$.getJSON('http://ip-api.com/json').done(function(data) {
-			ip = data.query;
-			session.update({ipData:data, ip: ip});
-		}).fail(function() {
-			$.get('http://icanhazip.com').done(function(data) {
-				ip = data.trim();
-				session.update({ip: ip});
+		var newStreams = data.streamsOrder.split(',')
+			.filter(function(name) { return data.streams[name] })
+			.map(function(name) {
+				return new Stream($.extend({name:name}, data.streams[name]));
 			});
-		});
 
-		return session;
-	}
+		if (newStreams.length > 0)
+			vm.streams(vm.streams().concat(newStreams));
+
+		vm.save(); // save updated streams to local storage
+
+	}, function(error) {
+		console.log("Reading streams failed: ", error.code);
+	});
+
+
+	firebase.child("news").limitToLast(10).on("value", function(snapshot) {
+		var items = snapshot.val();
+		if (!items) return;
+		items = Object.keys(items).map(function(key) { return items[key]; });
+		vm.newsItems(items).showNews(true);
+		setTimeout(function() { vm.showNews(false) }, 20000);
+	});
+
+
+	firebase.child("shoutbox").limitToLast(100).on("value", function(snapshot) {	
+		var items = snapshot.val();
+		if (!items) return;
+		items = Object.keys(items).map(function(key) { return items[key]; });
+		vm.shoutbox.items(items);
+	});
+
+
+	firebase.child("admin/obsoleteStreams").once("value", function(snapshot) {
+		var streams = (snapshot.val() || "").split(",");
+		var removedStreams = [];
+		streams.forEach(function(deadStreamName) {
+			var stream = vm.streams().filter(function(vmStream) { return vmStream.name() === deadStreamName })[0];
+			if (!stream) return;
+			if (stream.window()) {
+				vm.windows.remove(stream.window());
+			}
+
+			removedStreams.push(stream.name())
+			vm.streams.remove(stream);
+			console.log('removing obsolete stream: ', stream.name());
+		});
+		if (removedStreams.length > 0) {		
+			vm.save();
+			analyticsSession.child('removeObsolete').transaction(function(val) { return (val||'')+removedStreams.join(', ') });
+		}
+	});
 }
 
+
 var firebase = new Firebase("https://streamz.firebaseio.com/");
-var noAnalytics = localStorage['no-analytics'] === 'true';
 var ip = 'n/a';
-var analyticsSession = initAnalytics();
+var analyticsSession = initAnalytics(firebase);
 var localData = JSON.parse(localStorage["streamzData"] || '{}');
 
 var vm = window.v = new StreamzVM();
@@ -710,69 +554,4 @@ else
 
 ko.applyBindings(vm);
 
-
-firebase.child("admin").on("value", function(snapshot) {
-	var data = snapshot.val();
-
-	vm.streams().forEach(function(vmStream) {
-		var serverStream = data.streams[vmStream.name()];
-		if (serverStream) {
-			vmStream.type(serverStream.type).src(serverStream.src).isServerStream(true);
-			delete data.streams[vmStream.name()];
-		}
-	});
-
-	var newStreams = data.streamsOrder.split(',')
-		.filter(function(name) { return data.streams[name] })
-		.map(function(name) {
-			return new Stream($.extend({name:name}, data.streams[name]));
-		});
-
-	if (newStreams.length > 0)
-		vm.streams(vm.streams().concat(newStreams));
-
-	vm.save(); // save updated streams to local storage
-
-}, function(error) {
-	console.log("Reading streams failed: ", error.code);
-});
-
-
-firebase.child("news").limitToLast(10).on("value", function(snapshot) {
-	var items = snapshot.val();
-	if (!items) return;
-	items = Object.keys(items).map(function(key) { return items[key]; });
-	vm.newsItems(items).showNews(true);
-	setTimeout(function() { vm.showNews(false) }, 20000);
-});
-
-
-firebase.child("shoutbox").limitToLast(100).on("value", function(snapshot) {	
-	var items = snapshot.val();
-	if (!items) return;
-	items = Object.keys(items).map(function(key) { return items[key]; });
-	vm.shoutbox.items(items);
-});
-
-
-firebase.child("admin/obsoleteStreams").once("value", function(snapshot) {
-	var streams = (snapshot.val() || "").split(",");
-	var removedStreams = [];
-	streams.forEach(function(deadStreamName) {
-		var stream = vm.streams().filter(function(vmStream) { return vmStream.name() === deadStreamName })[0];
-		if (!stream) return;
-		if (stream.window()) {
-			vm.windows.remove(stream.window());
-		}
-
-		removedStreams.push(stream.name())
-		vm.streams.remove(stream);
-		console.log('removing obsolete stream: ', stream.name());
-	});
-	if (removedStreams.length > 0) {		
-		vm.save();
-		analyticsSession.child('removeObsolete').transaction(function(val) { return (val||'')+removedStreams.join(', ') });
-	}
-});
-
-
+fetchUpdates();
