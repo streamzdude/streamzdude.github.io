@@ -13,7 +13,7 @@
     "uglify-js": "^2.6.1"
   },
   "scripts": {
-    "build": "browserify script.js | uglifyjs -mc > bundle.js",
-    "watch": "watchify script.js -o bundle.js --debug --verbose"
+    "build": "browserify src/script.js | uglifyjs -mc > dist/bundle.js",
+    "watch": "watchify src/script.js -o dist/bundle.js --debug --verbose"
   }
 }
