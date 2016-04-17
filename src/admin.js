@@ -1,3 +1,6 @@
+var $ = require('jquery');
+var ko = require('knockout');
+var Firebase = require('firebase');
 
 function Stream(stream) {
 	stream = stream || {};
@@ -56,7 +59,7 @@ function VM() {
 			name: self.newStream.name(),
 			type: self.newStream.type(),
 			src: self.newStream.src(),
-			visible: true
+			visible: self.newStream.visible()
 		};
 		self.streams.push(new Stream(stream));
 		self.newStream.name('').type('jwplayer').src('').hasFocus(true);
@@ -83,7 +86,7 @@ function VM() {
 
 
 function listenForStreams() {
-	firebase.on("value", function(snapshot) {
+	firebase.child("admin").on("value", function(snapshot) {
 		var data = snapshot.val();
 		console.log("received data:", data);
 
@@ -100,12 +103,10 @@ function listenForStreams() {
 }
 
 
-
-
 var vm = new VM();
 ko.applyBindings(vm);
 
-var firebase = new Firebase("https://streamz.firebaseio.com/admin");
+var firebase = new Firebase("https://streamz.firebaseio.com/");
 var auth = firebase.getAuth();
 //var auth = {uid:'lol', provider:'hehe'};
 if (auth) {

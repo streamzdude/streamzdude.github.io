@@ -14,6 +14,8 @@
   },
   "scripts": {
     "build": "browserify src/main.js | uglifyjs -mc > dist/bundle.js",
-    "watch": "watchify src/main.js -o dist/bundle.js --debug --verbose"
+    "watch": "watchify src/main.js -o dist/bundle.js --debug --verbose",
+    "build-admin": "browserify src/admin.js | uglifyjs -mc > dist/admin.js",
+    "watch-admin": "watchify src/admin.js -o dist/admin.js --debug --verbose"
   }
 }
