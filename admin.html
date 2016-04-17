@@ -35,7 +35,12 @@
 				<td data-bind="text: timeStr"></td>
 				<td data-bind="text: duration"></td>
 				<td data-bind="text: ip"></td>
-				<td data-bind="text: location"></td>
+				<td>
+					<!-- ko if: ipData && ipData.countryCode -->
+						<img data-bind="attr: {class: 'flag flag-' + ipData.countryCode.toLowerCase()}" src="images/blank.png"/>
+					<!-- /ko -->
+					<span data-bind="text: location"></span>
+				</td>
 				<td data-bind="text: ipData && ipData.isp"></td>
 				<td data-bind="text: streamsStr"></td>
 			</tr>
