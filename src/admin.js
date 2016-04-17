@@ -21,7 +21,7 @@ function Session(data) {
 	this.location = data.ipData && (data.ipData.country + '/' + data.ipData.city) ||  '';
 	this.timeStr = 'n/a';
 	this.duration = 'n/a';
-	this.streamsStr = data.openWindow && Object.keys(data.openWindow).map(key => data.openWindow[key]).join(', ') || '';
+	this.streamsStr = data.openWindow && Object.keys(data.openWindow).map(function(key) { return data.openWindow[key] }).join(', ') || '';
 
 	if (data.started) {
 		this.timeStr = moment(data.started).format("D/M/Y HH:mm:ss");
@@ -134,7 +134,7 @@ function listenForStreams() {
 
 	firebase.child("stats/sessions").limitToLast(50).on("value", function(snapshot) {
 		var data = snapshot.val();
-		var sessions = Object.keys(data).map(key => new Session(data[key])).reverse();
+		var sessions = Object.keys(data).map(function(key) { return new Session(data[key]) }).reverse();
 		console.log("sessions: ", sessions);
 		vm.sessions(sessions);
 	}, function (error) {
