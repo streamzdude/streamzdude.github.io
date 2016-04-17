@@ -20,8 +20,30 @@
 <p><a href="./">Back to streamz</a></p>
 
 <div data-bind="visible: initialized">
+	<h3>Sessions:</h3>
+	<table border="1">
+		<thead data-bind="visible: sessions().length > 0" zstyle="text-align: left;">
+			<th zwidth="14%">Time</th>
+			<th zwidth="12%">Duration</th>
+			<th zwidth="9%">IP</th>
+			<th>Location</th>
+			<th>ISP</th>
+			<th width="25%">Streams</th>
+		</thead>
+		<tbody data-bind="foreach: sessions">
+			<tr>
+				<td data-bind="text: timeStr"></td>
+				<td data-bind="text: duration"></td>
+				<td data-bind="text: ip"></td>
+				<td data-bind="text: location"></td>
+				<td data-bind="text: ipData && ipData.isp"></td>
+				<td data-bind="text: streamsStr"></td>
+			</tr>
+		</tbody>
+	</table>
+
 	<h3>Streams:</h3>
-	<table>
+	<table id="streamsTable">
 		<thead data-bind="visible: streams().length > 0">
 			<tr>
 				<th width="20%">Name</th>

@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var ko = require('knockout');
 var Firebase = require('firebase');
+var moment = require('moment');
 
 function Stream(stream) {
 	stream = stream || {};
@@ -11,12 +12,42 @@ function Stream(stream) {
 	this.src = ko.observable(stream.src || '');
 }
 
+function Session(data) {
+	data = data || {};
+	$.extend(this, data);
+	
+	this.ip = data.ip || (data.ipData && data.ipData.query) || 'n/a';
+	this.ipData = data.ipData || null;
+	this.location = data.ipData && (data.ipData.country + '/' + data.ipData.city) ||  '';
+	this.timeStr = 'n/a';
+	this.duration = 'n/a';
+	this.streamsStr = data.openWindow && Object.keys(data.openWindow).map(key => data.openWindow[key]).join(', ') || '';
+
+	if (data.started) {
+		this.timeStr = moment(data.started).format("D/M/Y HH:mm:ss");
+		var h = 0, m = 0, s = Math.round(moment.duration((data.ended || Date.now()) - data.started).asSeconds());
+		if (s >= 60) {
+			m = Math.floor(s / 60);
+			s = s % 60;
+		}
+		if (m >= 60) {
+			h = Math.floor(m / 60);
+			m = m % 60;
+		}
+		this.duration = (h ? h + ' hr' + (h>1?'s ':' ') : '') + (m ? m + ' min' + (m>1?'s ':' ') : '') + s + ' sec' + (s!==1?'s':'');
+		if (!data.ended) {
+			this.duration += '~';
+		}
+	}
+}
+
 function VM() {
 	var self = this;
 
 	this.initialized = ko.observable(false);
 	this.authData = ko.observable(null);
 	this.streams = ko.observableArray();
+	this.sessions = ko.observableArray();
 
 	this.newStream = new Stream();
 	this.newStream.hasFocus = ko.observable(true);
@@ -100,7 +131,18 @@ function listenForStreams() {
 	}, function (error) {
   		console.log("Reading streams failed: ", error.code);
 	});
+
+	firebase.child("stats/sessions").limitToLast(50).on("value", function(snapshot) {
+		var data = snapshot.val();
+		var sessions = Object.keys(data).map(key => new Session(data[key])).reverse();
+		console.log("sessions: ", sessions);
+		vm.sessions(sessions);
+	}, function (error) {
+  		console.log("Reading sessions failed: ", error.code);
+	});
 }
+
+
 
 
 var vm = new VM();

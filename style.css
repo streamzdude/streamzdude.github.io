@@ -25,7 +25,7 @@ html.admin table input[type=text], html.admin table select {
 	width: 100%;
 }
 
-html.admin table {
+html.admin #streamsTable {
 	width: 80%;
 	margin: 20px;
 }
