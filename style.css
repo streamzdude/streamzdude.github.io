@@ -34,6 +34,18 @@ html.admin table td {
 	padding: 2px;
 }
 
+html.admin a {
+	color: #ddd;
+}
+
+html.admin a:visited {
+	color: #888;
+}
+
+html.admin a:hover {
+	color: #fff;
+}
+
 button {
 	color: initial;
 }

@@ -25,24 +25,51 @@
 		<thead data-bind="visible: sessions().length > 0" zstyle="text-align: left;">
 			<th zwidth="14%">Time</th>
 			<th zwidth="12%">Duration</th>
-			<th zwidth="9%">IP</th>
-			<th>Location</th>
-			<th>ISP</th>
+			<th zwidth="6%">IP</th>
+			<th width="25%">Location</th>
 			<th width="25%">Streams</th>
+			<th width="16%">Edits</th>
+			<th zwidth="2%">T</th>
 		</thead>
 		<tbody data-bind="foreach: sessions">
 			<tr>
-				<td data-bind="text: timeStr"></td>
+				<td data-bind="text: timeStr, attr: {title: browserDate}"></td>
 				<td data-bind="text: duration"></td>
 				<td data-bind="text: ip"></td>
 				<td>
 					<!-- ko if: ipData && ipData.countryCode -->
 						<img data-bind="attr: {class: 'flag flag-' + ipData.countryCode.toLowerCase()}" src="images/blank.png"/>
 					<!-- /ko -->
-					<span data-bind="text: location"></span>
+					<span data-bind="text: location + ' (' + (ipData && ipData.isp || '') + ')'"></span>
 				</td>
-				<td data-bind="text: ipData && ipData.isp"></td>
 				<td data-bind="text: streamsStr"></td>
+				<td>
+					<!-- ko if: adds.length -->
+						<div>
+						Adds:
+						<!-- ko foreach: adds -->
+						<a data-bind="text: name || '<empty>', attr: {href: src, title: src}"></a>
+						(<span data-bind="text: type[0].toUpperCase()"></span>)
+						<!-- /ko -->
+						</div>
+					<!-- /ko -->
+
+					<!-- ko if: edits.length -->
+						<div>
+						Edits:
+						<!-- ko foreach: edits -->
+						[<a data-bind="text: from.name || '<empty>', attr: {href: from.src, title: from.src}"></a>
+						(<span data-bind="text: from.type[0].toUpperCase()"></span>)
+						&#8594;
+						<a data-bind="text: to.name || '<empty>', attr: {href: to.src, title: to.src}"></a>
+						(<span data-bind="text: to.type[0].toUpperCase()"></span>)]
+						<!-- /ko -->
+						</div>
+					<!-- /ko -->
+
+				</td>
+
+				<td data-bind="text: toggleCustomize || ''"></td>
 			</tr>
 		</tbody>
 	</table>

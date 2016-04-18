@@ -3,6 +3,10 @@ var ko = require('knockout');
 var Firebase = require('firebase');
 var moment = require('moment');
 
+function toArray(obj) {
+	return Object.keys(obj || {}).map(function(key) { return obj[key] });
+}
+
 function Stream(stream) {
 	stream = stream || {};
 	$.extend(this, stream);
@@ -21,7 +25,10 @@ function Session(data) {
 	this.location = data.ipData && (data.ipData.country + '/' + data.ipData.city) ||  '';
 	this.timeStr = 'n/a';
 	this.duration = 'n/a';
-	this.streamsStr = data.openWindow && Object.keys(data.openWindow).map(function(key) { return data.openWindow[key] }).join(', ') || '';
+	this.streamsStr = toArray(data.openWindow).map(function(name) { return name || '<empty>' }).join(', ');
+	this.adds = toArray(data.addStream);
+	this.edits = toArray(data.editStream);
+	this.toggleCustomize = this.toggleCustomize || 0;
 
 	if (data.started) {
 		this.timeStr = moment(data.started).format("D/M/Y HH:mm:ss");
@@ -134,7 +141,7 @@ function listenForStreams() {
 
 	firebase.child("stats/sessions").limitToLast(50).on("value", function(snapshot) {
 		var data = snapshot.val();
-		var sessions = Object.keys(data).map(function(key) { return new Session(data[key]) }).reverse();
+		var sessions = toArray(data).map(function(session) { return new Session(session) }).reverse();
 		console.log("sessions: ", sessions);
 		vm.sessions(sessions);
 	}, function (error) {
