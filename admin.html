@@ -20,9 +20,10 @@
 <p><a href="./">Back to streamz</a></p>
 
 <div data-bind="visible: initialized">
+	<!-- ko if: sessions().length -->
 	<h3>Sessions:</h3>
 	<table border="1">
-		<thead data-bind="visible: sessions().length > 0" zstyle="text-align: left;">
+		<thead>
 			<th zwidth="14%">Time</th>
 			<th zwidth="12%">Duration</th>
 			<th zwidth="6%">IP</th>
@@ -73,10 +74,12 @@
 			</tr>
 		</tbody>
 	</table>
+	<!-- /ko -->
 
+	<!-- ko if: streams().length -->
 	<h3>Streams:</h3>
 	<table id="streamsTable">
-		<thead data-bind="visible: streams().length > 0">
+		<thead>
 			<tr>
 				<th width="20%">Name</th>
 				<th width="3%">Visible</th>
@@ -104,6 +107,7 @@
 			</tr>
 		</tbody>
 	</table>
+	<!-- /ko -->
 
 	<p data-bind="with: newStream">
 		Name: <input type="text" data-bind="textInput: name, hasFocus: hasFocus"/>
