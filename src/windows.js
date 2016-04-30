@@ -1,5 +1,6 @@
 var $ = require('jquery');
 var ko = require('knockout');
+var framebustbust = require('./framebustbust');
 
 var numPlayers = 0;
 jwplayer.key='cH3LS/5ip1cRnTAeAfHTSnww0iWLW/Vb62KpZK+nusI=';
@@ -23,7 +24,8 @@ function winJwplayer(elem, stream)
 	});
 }
 
-function winYoutube(elem, src) {
+function winYoutube(elem, stream) {
+	var src = stream.src();
 	if (src.indexOf('http') === 0) {
 		src = src.slice(src.lastIndexOf('/') + 1);
 		if (src.indexOf('watch?v=') === 0)
@@ -33,13 +35,17 @@ function winYoutube(elem, src) {
 
 	}
 	src = 'https://www.youtube.com/embed/' + src + '?rel=0&autoplay=1&showinfo=1';
-	winIframe(elem, src);
+	winIframe(elem, null, src);
 }
 
-function winIframe(elem, src)
+function winIframe(elem, stream, src)
 {
+	if (stream && stream.isFrameBuster()) {
+		framebustbust();
+	}
+
 	$('<iframe allowfullscreen webkitallowfullscreen="true" height="100%" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" />')
-		.prop('src', src)
+		.prop('src', stream ? stream.src() : src)
 		.appendTo(elem);
 }
 
@@ -103,8 +109,8 @@ ko.bindingHandlers.window = {
 
 		switch (stream.type()) {
 			case 'jwplayer': winJwplayer(playerDiv, stream); break;
-			case 'iframe': winIframe(playerDiv, stream.src()); break;
-			case 'youtube': winYoutube(playerDiv, stream.src()); break;
+			case 'iframe': winIframe(playerDiv, stream); break;
+			case 'youtube': winYoutube(playerDiv, stream); break;
 			case 'html': playerDiv.append( stream.src() ); break;
 			case 'shoutbox': winShoutbox(elem); break;
 		}

@@ -2,9 +2,9 @@ var $ = require('jquery');
 require('jquery-ui');
 var ko = require('knockout');
 var createShoutbox = require('./shoutbox');
+var framebustbust = require('./framebustbust');
 
 module.exports = StreamzVM;
-
 
 function Stream(stream) {
 	var self = this;
@@ -15,13 +15,15 @@ function Stream(stream) {
 	this.type = ko.observable(stream.type);
 	this.src = ko.observable(stream.src);
 	this.isServerStream = ko.observable(false);
+	this.isFrameBuster = ko.observable(stream.isFrameBuster || false);
 
 	this.save = function() {
 		var stream = {
 			name: self.name(),
 			type: self.type(),
 			src: self.src(),
-			visible: self.visible()
+			visible: self.visible(),
+			isFrameBuster: self.isFrameBuster() || undefined
 		};
 		['bufferlength', 'image', 'width', 'height'].forEach(function(prop) {
 			if (typeof self[prop] !== 'undefined') {
@@ -211,6 +213,13 @@ function StreamzVM(firebase, analytics, dataVersion) {
 		win.stream.window(null);
 		self.windows.remove(win);
 		self.save();
+
+		if (win.stream.isFrameBuster()) {
+			var frameBusters = self.windows().filter(function(w) { return w.stream.isFrameBuster() });
+			if (frameBusters.length === 0) {
+				framebustbust(true);
+			}
+		}
 	}
 
 	this.reloadWindow = function(win) {
