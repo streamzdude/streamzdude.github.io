@@ -58,13 +58,15 @@ button {
 header {
 	position: relative;
 	flex: 0 1 auto;
+	text-indent: 33px;
 	background: #484848;
 	box-shadow: 0px 1px 3px black;
 	padding: 0px 3px;
-	padding-left: 40px;
 	font-size: 14px;
 	transition: all 0.8s ease-out;
 }
+
+header * { text-indent: initial; }
 
 /*
 header:after {
