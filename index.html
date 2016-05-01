@@ -11,7 +11,7 @@
 <body>
 
 
-<header data-bind="sortable: {data: headerStreams, beforeMove: headerStreamsSorted, options: {items: '.streamLink', distance: 5}}">
+<header data-bind="sortable: {data: headerStreams, beforeMove: headerStreamsSorted, options: {items: '.streamLink', distance: 5, start: sortableStart, stop: sortableStop}}">
 	<a href="#" class="headerLink streamLink" data-bind="click: $root.windowBtnClicked, text: name, css: {active: window}"></a>
 </header>
 

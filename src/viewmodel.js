@@ -89,10 +89,17 @@ function StreamzVM(firebase, analytics, dataVersion) {
 		return self.streams().filter(function(stream) { return stream.visible() });
 	});
 
-	this.headerStreams = ko.observableArray();
+	this.headerStreams = ko.observableArray(); // use separate obsArray to enable sortable to modify it
 	this.visibleStreams.subscribe(function(streams) {
 		self.headerStreams(streams);
 	});
+
+	this.showOverlay = ko.observable(false);
+	this.isCustomizing = ko.observable(false);
+	this.showReload = ko.observable(true);
+	this.showLocks = ko.observable(true);
+
+	this.shoutbox = createShoutbox(firebase, analytics);
 
 	this.headerStreamsSorted = function(data, e, ui) {
 		// cancel sorting, and manually update the source streams observableArray:
@@ -116,12 +123,9 @@ function StreamzVM(firebase, analytics, dataVersion) {
 		}, 0);
 	};
 
-	this.showOverlay = ko.observable(false);
-	this.isCustomizing = ko.observable(false);
-	this.showReload = ko.observable(true);
-	this.showLocks = ko.observable(true);
-
-	this.shoutbox = createShoutbox(firebase, analytics);
+	var isSorting = false; // prevent header buttons toggling a window during sorting (for firefox)
+	this.sortableStart = function(e,ui) { isSorting = true; }
+	this.sortableStop = function(e,ui) { setTimeout(function() { isSorting = false; }, 0); }
 
 	this.newsItems = ko.observable([]);
 	this.showNews = ko.observable(false);
@@ -217,7 +221,7 @@ function StreamzVM(firebase, analytics, dataVersion) {
 		if (e.ctrlKey) {
 			self.editStream(stream);
 		}
-		else {
+		else if (!isSorting) {
 			self.toggleWindow(stream);
 		}
 	}
