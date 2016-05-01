@@ -1,7 +1,7 @@
 var $ = require('jquery');
 var ko = require('knockout');
 var framebustbust = require('./framebustbust');
-require('knockout-sortable');
+require('knockout-sortable'); // must edit this module and remove calls to: require("jquery-ui/sortable") and require("jquery-ui/draggable");
 
 var numPlayers = 0;
 jwplayer.key='cH3LS/5ip1cRnTAeAfHTSnww0iWLW/Vb62KpZK+nusI=';
