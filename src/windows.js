@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var ko = require('knockout');
 var framebustbust = require('./framebustbust');
+require('knockout-sortable');
 
 var numPlayers = 0;
 jwplayer.key='cH3LS/5ip1cRnTAeAfHTSnww0iWLW/Vb62KpZK+nusI=';
@@ -133,7 +134,6 @@ ko.bindingHandlers.window = {
 		elem.resizable('option', 'aspectRatio', window.aspectRatioLocked());
 	}
 }
-
 
 $('#editStreamDlg').dialog({
 	autoOpen: false,

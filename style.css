@@ -56,10 +56,12 @@ button {
 }
 
 header {
+	position: relative;
 	flex: 0 1 auto;
 	background: #484848;
 	box-shadow: 0px 1px 3px black;
 	padding: 0px 3px;
+	padding-left: 40px;
 	font-size: 14px;
 	transition: all 0.8s ease-out;
 }
@@ -90,6 +92,9 @@ main {
 header a.streamLink {
 	color: #aaa;
 	background-color: #222;
+}
+
+a.headerLink {
 	text-decoration: none;
 	text-align: center;
 	display: inline-block;
@@ -98,17 +103,17 @@ header a.streamLink {
 	padding: 2px 10px;
 }
 
-header a.streamLink.active {
+a.headerLink.active {
 	color: #c6c6c6;
 	box-shadow: 0px 0px 3px 1px rgba(230,230,150,0.7);
 }
 
-header a.streamLink:hover {
+a.headerLink:hover {
 	color: white;
 }
 
 
-header a.buttonLink {
+a.buttonLink {
 	margin-right: 15px;
 	text-indent: -99999px;
 	background-color: #999;
@@ -119,20 +124,27 @@ header a.buttonLink {
 	padding-left: 7px;
 }
 
-header a.customizeLink {
+a.customizeLink {
 	background-position: -176px -111px;
+    position: absolute;
+    top: 0;
+    left: 3px;
 }
 
-header a.buttonLink:hover {
+a.buttonLink:hover {
 	background-color: #ddd;
 }
 
-header a.buttonLink.streamLink.active {
+a.buttonLink.headerLink.active {
 	box-shadow: 0px 0px 3px 1px rgba(255, 255, 173, 0.85);
 }
 
 header a.tileLink {
 	background-position: -176px -128px;
+}
+
+header .ui-sortable-placeholder {
+	height: auto !important;
 }
 
 .window {
@@ -350,6 +362,7 @@ input[type=text], textarea {
 .shout-time {
     color: #111;
 }
+
 
 
 .flag {

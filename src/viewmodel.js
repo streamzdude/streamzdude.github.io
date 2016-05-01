@@ -89,6 +89,33 @@ function StreamzVM(firebase, analytics, dataVersion) {
 		return self.streams().filter(function(stream) { return stream.visible() });
 	});
 
+	this.headerStreams = ko.observableArray();
+	this.visibleStreams.subscribe(function(streams) {
+		self.headerStreams(streams);
+	});
+
+	this.headerStreamsSorted = function(data, e, ui) {
+		// cancel sorting, and manually update the source streams observableArray:
+		var headerStreams = data.sourceParent();
+		var streams = self.streams();
+		var movedStream = headerStreams[data.sourceIndex];
+		var streamBefore = headerStreams[data.sourceIndex < data.targetIndex ? data.targetIndex : data.targetIndex-1];
+		var origIndex = streams.indexOf(movedStream);
+		var targetIndex = streams.indexOf(streamBefore) + 1;
+		if (origIndex < targetIndex) targetIndex--;
+
+		data.cancelDrop = true;
+
+		// using setTimeout to wait until after cancel reverts the array:
+		setTimeout(function() {
+			var streams = self.streams();
+			streams.splice(origIndex, 1);
+			streams.splice(targetIndex, 0, movedStream);
+			self.streams(streams);
+			self.save();
+		}, 0);
+	};
+
 	this.showOverlay = ko.observable(false);
 	this.isCustomizing = ko.observable(false);
 	this.showReload = ko.observable(true);
