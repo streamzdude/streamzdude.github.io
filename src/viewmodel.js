@@ -271,22 +271,6 @@ function StreamzVM(firebase, analytics, dataVersion) {
 		return self.streams().filter(function(stream) { return stream.name() === name })[0];
 	}
 
-	this.moveUp = function(stream) {
-		var i = self.streams().indexOf(stream);
-		if (i > 0) {
-			self.streams.splice(i, 1);
-			self.streams.splice(i-1, 0, stream);
-		}
-	}
-
-	this.moveDown = function(stream) {
-		var i = self.streams().indexOf(stream);
-		if (i < self.streams().length-1) {
-			self.streams.splice(i, 1);
-			self.streams.splice(i+1, 0, stream);
-		}		
-	}
-
 	this.tileWindows = function() {
 		// TODO: make this less gross & more flexible:		
 		var windows = $('.window');

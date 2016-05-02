@@ -259,7 +259,7 @@ h4 {
 }
 
 .customizeWindow .content .name {
-	width: 130px;
+	width: 150px;
 	display: inline-block;
 	margin-left: 3px;
 }
@@ -365,17 +365,15 @@ input[type=text], textarea {
     color: #111;
 }
 
+.streamRow {
+	white-space: nowrap;
+}
+
 .grabbable {
-    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: move;
     cursor: grab;
     cursor: -moz-grab;
     cursor: -webkit-grab;
-}
-
- .grabbable:active { 
-    cursor: grabbing;
-    cursor: -moz-grabbing;
-    cursor: -webkit-grabbing;
 }
 
 
