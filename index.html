@@ -10,14 +10,11 @@
 </head>
 <body>
 
-
 <header data-bind="sortable: {data: headerStreams, beforeMove: headerStreamsSorted, options: {items: '.streamLink', distance: 5, start: sortableStart, stop: sortableStop}}">
-	<a href="#" class="headerLink streamLink" data-bind="click: $root.windowBtnClicked, text: name, css: {active: window}"></a>
+	<a href="#" class="headerLink streamLink" data-bind="click: $root.windowBtnClicked, text: name, css: {active: window}">Loading...</a>
 </header>
 
 <a href="#" class="headerLink buttonLink customizeLink" data-bind="click: $root.toggleCustomize, css: {active: $root.isCustomizing}" title="Customize">A</a>
-
-
 
 <main>
 	<!-- ko foreach: windows -->
