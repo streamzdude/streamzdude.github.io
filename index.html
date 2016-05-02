@@ -41,15 +41,15 @@
 		<a href="#" data-bind="click: toggleCustomize" class="ui-icon ui-icon-close closeBtn" title="Close"></a>
 		<a href="#" data-bind="click: addStream">Add Stream</a>
 		<div class="content">
-			<!-- ko foreach: streams -->
+			<div data-bind="sortable: {data: streams, afterMove: save, options: {handle: '.name'}}">
 				<div>
 					<input type="checkbox" data-bind="checked: visible" />
-					<span data-bind="text: name" class="name"></span>
+					<span data-bind="text: name" class="name grabbable"></span>
 					<a href="#" data-bind="click: $root.editStream">Edit</a>
 					<a href="#" data-bind="click: $root.moveUp"   class="button ui-icon ui-icon-carat-1-n"> </a>
 					<a href="#" data-bind="click: $root.moveDown" class="button ui-icon ui-icon-carat-1-s"> </a>
 				</div>
-			<!-- /ko -->
+			</div>
 			
 			<hr />
 
