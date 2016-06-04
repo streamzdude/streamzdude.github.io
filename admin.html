@@ -9,7 +9,7 @@
 
 <div style="display:none" data-bind="visible: initialized">
 	<div data-bind="with: authData">
-		Logged in: <span data-bind="text: uid + ' (' + provider + ')'"></span>
+		Logged in: <span data-bind="text: providerData[0].displayname + ' - ' + uid + ' (' + providerData[0].providerId + ')'"></span>
 	</div>
 	<button data-bind="click: login, visible: !authData()">Login</button>
 	<button data-bind="click: logout, visible: !!authData()">Logout</button>
