@@ -1,5 +1,6 @@
 var $ = require('jquery');
 var ko = require('knockout');
+var firebase = require('firebase');
 
 module.exports = createShoutbox;
 
@@ -10,7 +11,9 @@ else {
 	localStorage["streamzShoutboxName"] = shoutboxName = ('anon' + Math.floor(Math.random()*1000));
 }
 
-function createShoutbox(firebase, analytics) {
+function createShoutbox(analytics) {
+	var db = firebase.database().ref();
+
 	var shoutbox = {
 		items: ko.observableArray([]),
 		message: ko.observable(''),
@@ -21,11 +24,11 @@ function createShoutbox(firebase, analytics) {
 			if (shoutbox.message().trim().length === 0 || 
 				shoutbox.name().trim().length === 0) return true;
 
-			firebase.child("shoutbox").push({
+			db.child("shoutbox").push({
 				msg: shoutbox.message(),
 				name: shoutbox.name(),
-				time: Firebase.ServerValue.TIMESTAMP,
-				sessionId: analytics.key()
+				time: firebase.database.ServerValue.TIMESTAMP,
+				sessionId: analytics.key
 			});
 
 			shoutbox.message('');

@@ -1,6 +1,6 @@
 var $ = require('jquery');
 var ko = require('knockout');
-var Firebase = require('firebase');
+var firebase = require('firebase');
 var moment = require('moment');
 
 function toArray(obj) {
@@ -84,7 +84,7 @@ function VM() {
 
 		var streamsOrder = self.streams().map(function(stream) { return stream.name().replace(/,/g,'') }).join(",");
 
-		firebase.set({streams: streams, streamsOrder: streamsOrder}, function(error) {
+		db.set({streams: streams, streamsOrder: streamsOrder}, function(error) {
 			if (error) {
 				console.log("failed saving streams:", error);
 				alert(error.message);
@@ -104,19 +104,18 @@ function VM() {
 	};
 
 	this.login = function () {
-		firebase.authWithOAuthPopup("google", function(error, authData) {
-		  if (error) {
-		    console.log("Login Failed!", error);
-		  } else {
-		    console.log("Authenticated successfully with payload:", authData);
-		    self.authData(authData);
+		var provider = new firebase.auth.GoogleAuthProvider();
+		firebase.auth().signInWithPopup(provider).then(function(result) {
+		    console.log("Authenticated successfully with payload:", result.user);
+		    self.authData(result.user);
 		    listenForStreams();
-		  }
+		}).catch(function(error) {
+		    console.log("Login Failed!", error);
 		});
 	};
 
 	this.logout = function() {
-		firebase.unauth();
+		firebase.auth().signOut();
 		self.authData(null);
 	}
 }
@@ -124,7 +123,7 @@ function VM() {
 
 
 function listenForStreams() {
-	firebase.child("admin").on("value", function(snapshot) {
+	db.child("admin").on("value", function(snapshot) {
 		var data = snapshot.val();
 		console.log("received data:", data);
 
@@ -139,7 +138,7 @@ function listenForStreams() {
   		console.log("Reading streams failed: ", error.code);
 	});
 
-	firebase.child("stats/sessions").limitToLast(50).on("value", function(snapshot) {
+	db.child("stats/sessions").limitToLast(50).on("value", function(snapshot) {
 		var data = snapshot.val();
 		var sessions = toArray(data).map(function(session) { return new Session(session) }).reverse();
 		console.log("sessions: ", sessions);
@@ -155,17 +154,23 @@ function listenForStreams() {
 var vm = new VM();
 ko.applyBindings(vm);
 
-var firebase = new Firebase("https://streamz.firebaseio.com/");
-var auth = firebase.getAuth();
-//var auth = {uid:'lol', provider:'hehe'};
-if (auth) {
-	vm.authData( auth );
-	listenForStreams();
+var firebaseConfig = {
+    apiKey: "AIzaSyB9h7b57i824rNibGYMN-s-4EuIJyXbqvk",
+    authDomain: "streamz.firebaseapp.com",
+    databaseURL: "https://streamz.firebaseio.com",
+    storageBucket: "project-2755015809000717199.appspot.com",
+};
+firebase.initializeApp(firebaseConfig);
 
-}
-vm.initialized(true);
+var db = firebase.database().ref();
 
+firebase.auth().onAuthStateChanged(function(user) {
+	console.log('auth:', user)
+	if (user) {
+		vm.authData( user );
+		listenForStreams();
+	}
 
-
-
+	vm.initialized(true);
+});
 

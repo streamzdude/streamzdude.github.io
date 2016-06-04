@@ -1,8 +1,9 @@
+var firebase = require('firebase');
 var $ = require('jquery');
 
-module.exports = function fetchUpdates(vm, firebase, analytics) {
-
-	firebase.child("admin").on("value", function(snapshot) {
+module.exports = function fetchUpdates(vm, analytics) {
+	var db = firebase.database().ref();
+	db.child("admin").on("value", function(snapshot) {
 		var data = snapshot.val();
 
 		vm.streams().forEach(function(vmStream) {
@@ -29,7 +30,7 @@ module.exports = function fetchUpdates(vm, firebase, analytics) {
 	});
 
 
-	firebase.child("news").limitToLast(10).on("value", function(snapshot) {
+	db.child("news").limitToLast(10).on("value", function(snapshot) {
 		var items = snapshot.val();
 		if (!items) return;
 		items = Object.keys(items).map(function(key) { return items[key]; });
@@ -38,7 +39,7 @@ module.exports = function fetchUpdates(vm, firebase, analytics) {
 	});
 
 
-	firebase.child("shoutbox").limitToLast(100).on("value", function(snapshot) {	
+	db.child("shoutbox").limitToLast(100).on("value", function(snapshot) {	
 		var items = snapshot.val();
 		if (!items) return;
 		items = Object.keys(items).map(function(key) { return items[key]; });
@@ -46,7 +47,7 @@ module.exports = function fetchUpdates(vm, firebase, analytics) {
 	});
 
 
-	firebase.child("admin/obsoleteStreams").once("value", function(snapshot) {
+	db.child("admin/obsoleteStreams").once("value", function(snapshot) {
 		var streams = (snapshot.val() || "").split(",");
 		var removedStreams = [];
 		streams.forEach(function(deadStreamName) {

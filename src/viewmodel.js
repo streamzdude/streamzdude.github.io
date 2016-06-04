@@ -79,7 +79,7 @@ function Window(stream, vm, analytics) {
 	}
 }
 
-function StreamzVM(firebase, analytics, dataVersion) {
+function StreamzVM(analytics, dataVersion) {
 	var self = this;
 
 	this.windows = ko.observableArray();
@@ -99,7 +99,7 @@ function StreamzVM(firebase, analytics, dataVersion) {
 	this.showReload = ko.observable(true);
 	this.showLocks = ko.observable(true);
 
-	this.shoutbox = createShoutbox(firebase, analytics);
+	this.shoutbox = createShoutbox(analytics);
 
 	this.headerStreamsSorted = function(data, e, ui) {
 		// cancel sorting, and manually update the source streams observableArray:

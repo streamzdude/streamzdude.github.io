@@ -1,7 +1,7 @@
 require('jquery');
 require('jquery-ui');
 var ko = require('knockout');
-var Firebase = require('firebase');
+var firebase = require('firebase');
 
 require('./jquery-ui-extensions');
 require('./timeago');
@@ -11,9 +11,17 @@ var fetchUpdates = require('./fetch-updates');
 var StreamzVM = require('./viewmodel');
 
 var dataVersion = 1;
-var database = new Firebase("https://streamz.firebaseio.com/");
-var analytics = initAnalytics(database);
-var vm = new StreamzVM(database, analytics, dataVersion);
+
+var firebaseConfig = {
+    apiKey: "AIzaSyB9h7b57i824rNibGYMN-s-4EuIJyXbqvk",
+    authDomain: "streamz.firebaseapp.com",
+    databaseURL: "https://streamz.firebaseio.com",
+    storageBucket: "project-2755015809000717199.appspot.com",
+};
+firebase.initializeApp(firebaseConfig);
+
+var analytics = initAnalytics();
+var vm = new StreamzVM(analytics, dataVersion);
 
 var localData = JSON.parse(localStorage["streamzData"] || '{}');
 if (localData.ver === dataVersion) {
@@ -25,4 +33,4 @@ else {
 
 ko.applyBindings(vm);
 
-fetchUpdates(vm, database, analytics);
+fetchUpdates(vm, analytics);
