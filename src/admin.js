@@ -59,6 +59,8 @@ function VM() {
 	this.newStream = new Stream();
 	this.newStream.hasFocus = ko.observable(true);
 
+	this.sessionsLimit = ko.observable(50);
+
 	this.removeStream = function(stream) {
 		self.streams.remove(stream);
 	};
@@ -103,11 +105,17 @@ function VM() {
 		self.newStream.name('').type('jwplayer').src('').hasFocus(true);
 	};
 
+	this.loadMoreStreams = function() {
+		self.sessionsLimit(self.sessionsLimit() + 50);
+		listenForSessions();
+	}
+
 	this.login = function () {
 		var provider = new firebase.auth.GoogleAuthProvider();
 		firebase.auth().signInWithPopup(provider).then(function(result) {
 		    console.log("Authenticated successfully with payload:", result.user);
 		    self.authData(result.user);
+		    listenForSessions();
 		    listenForStreams();
 		}).catch(function(error) {
 		    console.log("Login Failed!", error);
@@ -137,8 +145,12 @@ function listenForStreams() {
 	}, function (error) {
   		console.log("Reading streams failed: ", error.code);
 	});
+}
 
-	db.child("stats/sessions").limitToLast(50).on("value", function(snapshot) {
+function listenForSessions() {
+	if (sessionsRef) { sessionsRef.off("value"); }
+	sessionsRef = db.child("stats/sessions").limitToLast(vm.sessionsLimit());
+	sessionsRef.on("value", function(snapshot) {
 		var data = snapshot.val();
 		var sessions = toArray(data).map(function(session) { return new Session(session) }).reverse();
 		console.log("sessions: ", sessions);
@@ -164,10 +176,13 @@ firebase.initializeApp(firebaseConfig);
 
 var db = firebase.database().ref();
 
+var sessionsRef;
+
 firebase.auth().onAuthStateChanged(function(user) {
 	console.log('auth:', user)
 	if (user) {
 		vm.authData( user );
+		listenForSessions();
 		listenForStreams();
 	}
 
