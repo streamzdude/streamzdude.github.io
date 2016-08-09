@@ -12,12 +12,17 @@ module.exports = function initAnalytics() {
 		return o;
 	}
 	else {
+		var uid = localStorage['streamzUid'] || guid();
+		localStorage['streamzUid'] = uid;
 		var session = db.child('stats/sessions').push();
 		session.update({
 				browserDate: new Date().toString(),
-				started: firebase.database.ServerValue.TIMESTAMP
+				started: firebase.database.ServerValue.TIMESTAMP,
+				uid: uid
 		});
 		session.onDisconnect().update({ended: firebase.database.ServerValue.TIMESTAMP});
+
+		db.child("stats/users").child(uid).set({name: uid}, function(err) {});
 
 		fetchIP.then(function(data) {
 			session.update(data);
@@ -27,4 +32,12 @@ module.exports = function initAnalytics() {
 	}
 }
 
-
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}

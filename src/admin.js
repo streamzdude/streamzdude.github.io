@@ -22,6 +22,8 @@ function Session(data) {
 	
 	this.ip = data.ip || (data.ipData && data.ipData.query) || 'n/a';
 	this.ipData = data.ipData || null;
+	this.uid = data.uid || '';
+	this.username = users[this.uid] ? users[this.uid].name : '';
 	this.location = data.ipData && (data.ipData.country + '/' + data.ipData.city) ||  '';
 	this.timeStr = 'n/a';
 	this.duration = 'n/a';
@@ -144,8 +146,10 @@ function listenForStreams() {
 
 	}, function (error) {
   		console.log("Reading streams failed: ", error.code);
-	});
+	});	
 }
+
+var users;
 
 function listenForSessions() {
 	if (sessionsRef) { sessionsRef.off("value"); }
@@ -158,8 +162,15 @@ function listenForSessions() {
 	}, function (error) {
   		console.log("Reading sessions failed: ", error.code);
 	});
+
 }
 
+function getUsers() {
+	db.child("stats/users").on("value", function(snapshot) {
+		users = snapshot.val();
+		listenForSessions();
+	});
+}
 
 
 
@@ -182,7 +193,7 @@ firebase.auth().onAuthStateChanged(function(user) {
 	console.log('auth:', user)
 	if (user) {
 		vm.authData( user );
-		listenForSessions();
+		getUsers();
 		listenForStreams();
 	}
 

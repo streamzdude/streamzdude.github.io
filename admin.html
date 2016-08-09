@@ -26,22 +26,27 @@
 		<thead>
 			<th zwidth="14%">Time</th>
 			<th zwidth="12%">Duration</th>
+			<th>Name</th>
 			<th zwidth="6%">IP</th>
-			<th width="25%">Location</th>
-			<th width="25%">Streams</th>
-			<th width="16%">Edits</th>
+			<th width="24%">Location</th>
+			<th width="19%">Streams</th>
+			<th width="8%">Edits</th>
 			<th zwidth="2%">T</th>
 		</thead>
 		<tbody data-bind="foreach: sessions">
 			<tr>
 				<td data-bind="text: timeStr, attr: {title: browserDate}"></td>
 				<td data-bind="text: duration"></td>
+				<td data-bind="text: username"></td>
 				<td data-bind="text: ip"></td>
 				<td>
 					<!-- ko if: ipData && ipData.countryCode -->
 						<img data-bind="attr: {class: 'flag flag-' + ipData.countryCode.toLowerCase()}" src="images/blank.png"/>
 					<!-- /ko -->
-					<span data-bind="text: location + ' (' + (ipData && ipData.isp || '') + ')'"></span>
+					<span data-bind="text: location"></span>
+					<!-- ko if: ipData && ipData.isp -->
+						<span data-bind="text: ' (' + (ipData && ipData.isp || '') + ')'"></span>
+					<!-- /ko  -->
 				</td>
 				<td data-bind="text: streamsStr"></td>
 				<td>
