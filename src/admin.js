@@ -8,12 +8,27 @@ function toArray(obj) {
 }
 
 function Stream(stream) {
+	var self = this;
 	stream = stream || {};
 	$.extend(this, stream);
 	this.visible = ko.observable(stream.visible !== false);
 	this.name = ko.observable(stream.name || '');
 	this.type = ko.observable(stream.type || 'jwplayer');
 	this.src = ko.observable(stream.src || '');
+
+	this.save = function() {
+		var obj = {
+			type: self.type(),
+			src: self.src(),
+			visible: self.visible()
+		};
+		['bufferlength', 'image', 'width', 'height'].forEach(function(prop) {
+			if (typeof self[prop] !== 'undefined') {
+				obj[prop] = self[prop];
+			}
+		});
+		return obj;
+	}
 }
 
 function Session(data) {
@@ -67,28 +82,25 @@ function VM() {
 		self.streams.remove(stream);
 	};
 
+	this.saveStream = function(stream) {
+		db.child('admin/streams').child(stream.name() || '-').update(stream.save(), function(err) {
+			if (err) return console.log(err);
+			console.log('saved stream', stream);
+		});
+	}
+
 	this.save = function() {
 		if (!confirm('Sure you wanna overwrite all streams data?'))
 			return;
 
 		var streams = self.streams().reduce(function(currStreams, stream) {
-			var name = stream.name() || '-';
-			currStreams[name] = {
-				type: stream.type(),
-				src: stream.src(),
-				visible: stream.visible()
-			};
-			['bufferlength', 'image', 'width', 'height'].forEach(function(prop) {
-				if (typeof stream[prop] !== 'undefined') {
-					currStreams[name][prop] = stream[prop];
-				}
-			});
+			currStreams[stream.name() || '-'] = stream.save();
 			return currStreams;
 		}, {});
 
 		var streamsOrder = self.streams().map(function(stream) { return stream.name().replace(/,/g,'') }).join(",");
 
-		db.set({streams: streams, streamsOrder: streamsOrder}, function(error) {
+		db.child('admin').update({streams: streams, streamsOrder: streamsOrder}, function(error) {
 			if (error) {
 				console.log("failed saving streams:", error);
 				alert(error.message);
