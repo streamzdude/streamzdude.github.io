@@ -39,6 +39,9 @@ function Session(data) {
 	this.ipData = data.ipData || null;
 	this.uid = data.uid || '';
 	this.username = users[this.uid] ? users[this.uid].name : '';
+	if (this.username.length === 36 && this.username[8] === '-') { 
+		this.username = this.username.slice(0, 4) + '...';
+	}
 	this.location = data.ipData && (data.ipData.country + '/' + data.ipData.city) ||  '';
 	this.timeStr = 'n/a';
 	this.duration = 'n/a';
