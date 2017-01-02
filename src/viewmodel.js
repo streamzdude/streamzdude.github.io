@@ -271,8 +271,10 @@ function StreamzVM(analytics, dataVersion) {
 		return self.streams().filter(function(stream) { return stream.name() === name })[0];
 	}
 
-	this.tileWindows = function() {
+	this.tileWindows = function(win, e) {
 		// TODO: make this less gross & more flexible:		
+		if (!e.ctrlKey) { return; }
+		
 		var windows = $('.window');
 		if (windows.length === 0) return;
 		var main = $('main');
