@@ -273,7 +273,7 @@ function StreamzVM(analytics, dataVersion) {
 
 	this.tileWindows = function(win, e) {
 		// TODO: make this less gross & more flexible:		
-		if (!e.ctrlKey) { return; }
+		if (!e.ctrlKey && window.location.hash !== '#dekel') { return; }
 		
 		var windows = $('.window');
 		if (windows.length === 0) return;

@@ -1,5 +1,5 @@
 require('jquery');
-require('jquery-ui');
+require('jquery-ui'); // note: modified jquery-ui to work with browserify...
 var ko = require('knockout');
 var firebase = require('firebase');
 

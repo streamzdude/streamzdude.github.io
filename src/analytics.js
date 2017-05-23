@@ -7,7 +7,7 @@ module.exports = function initAnalytics() {
 	var db = firebase.database().ref();
 	db.child('stats/hits').transaction(function(i){ return (i||0)+1 });
 	if (noAnalytics) {
-		var o = {child: f, transaction: f, update: f, push: f, set: f, key: function(){ return 'no-analytics' }};
+		var o = {child: f, transaction: f, update: f, push: f, set: f, key: 'no-analytics'};
 		function f() { return o }
 		return o;
 	}
