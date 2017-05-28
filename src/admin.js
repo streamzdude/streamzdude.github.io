@@ -42,7 +42,7 @@ function Session(data) {
 	if (this.username.length === 36 && this.username[8] === '-') { 
 		this.username = this.username.slice(0, 4) + '...';
 	}
-	this.location = data.ipData && (data.ipData.country + (data.ipData.city ? '/' + data.ipData.city : '') ||  '';
+	this.location = data.ipData && (data.ipData.country + (data.ipData.city ? '/' + data.ipData.city : '')) ||  '';
 	this.timeStr = 'n/a';
 	this.duration = 'n/a';
 	this.streamsStr = toArray(data.openWindow).map(function(name) { return name || '<empty>' }).join(', ');
