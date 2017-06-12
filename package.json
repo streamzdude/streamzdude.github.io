@@ -10,14 +10,16 @@
     "moment": "^2.12.0"
   },
   "devDependencies": {
+    "babel-preset-es2015": "^6.24.1",
+    "babelify": "^7.3.0",
     "browserify": "^13.0.0",
     "watchify": "^3.7.0",
     "uglify-js": "^2.6.1"
   },
   "scripts": {
-    "build": "browserify src/main.js | uglifyjs -mc > dist/bundle.js",
-    "watch": "watchify src/main.js -o dist/bundle.js --debug --verbose",
-    "build-admin": "browserify src/admin.js | uglifyjs -mc > dist/admin.js",
-    "watch-admin": "watchify src/admin.js -o dist/admin.js --debug --verbose"
+    "build": "browserify src/main.js -t [ babelify --presets [ es2015 ] ] | uglifyjs -mc > dist/bundle.js",
+    "watch": "watchify src/main.js -t [ babelify --presets [ es2015 ] ] -o dist/bundle.js --debug --verbose",
+    "build-admin": "browserify src/admin.js -t [ babelify --presets [ es2015 ] ] | uglifyjs -mc > dist/admin.js",
+    "watch-admin": "watchify src/admin.js -t [ babelify --presets [ es2015 ] ] -o dist/admin.js --debug --verbose"
   }
 }

@@ -271,10 +271,58 @@ function StreamzVM(analytics, dataVersion) {
 		return self.streams().filter(function(stream) { return stream.name() === name })[0];
 	}
 
-	this.tileWindows = function(win, e) {
-		// TODO: make this less gross & more flexible:		
-		if (!e.ctrlKey && window.location.hash !== '#dekel') { return; }
+	this.enlargeWindow = function(win) {
+		const main = $('main');
+		const left = win.left(), top = win.top(), wid = win.width(), h = win.height(), right = left + wid, bottom = top + h;
+
+		const wins = self.windows().filter(w => w !== win);
+
+		const hWins = wins.filter(w => {
+			let wleft = w.left(), wtop = w.top(), wwid = w.width(), wh = w.height(), wright = wleft + wwid, wbottom = wtop + wh;
+			return wtop <= bottom && wbottom >= top;
+		});
+
+		const vWins = wins.filter(w => {
+			let wleft = w.left(), wtop = w.top(), wwid = w.width(), wh = w.height(), wright = wleft + wwid, wbottom = wtop + wh;
+			return wleft <= right && wright >= left;
+		});
+
+		const rWins = hWins.filter(w => w.left() >= right).sort((a,b) => a.left() - b.left());
+		const lWins = hWins.filter(w => w.left()+w.width() <= left).sort((a,b) => a.left()+a.width() - (b.left()+b.width()));
+		const tWins = vWins.filter(w => w.top()+w.height() <= top).sort((a,b) => a.top()+a.height() - (b.top()+b.height()));
+		const bWins = vWins.filter(w => w.top() >= bottom).sort((a,b) => a.top() - b.top());
+
+
+		const targetLeft = Math.max.apply(null, lWins.map(w => w.left() + w.width()).concat(0));
+		const targetRight = Math.min.apply(null, rWins.map(w => w.left()).concat(main.width()));
+		const targetTop =  Math.max.apply(null, tWins.map(w => w.top() + w.height()).concat(0));
+		const targetBottom = Math.min.apply(null, bWins.map(w => w.top()).concat(main.height()));
+
+		win.top(targetTop).left(targetLeft).width(targetRight-targetLeft).height(targetBottom-targetTop);
+
+		$('body').addClass('animateWindows');
+
+		const elem = $('.window').get().filter(w => ko.dataFor(w) === win)[0];
+		$(elem).css({
+			left: win.left() + 'px',
+			top: win.top() + 'px',
+			width: win.width() + 'px',
+			height: win.height() + 'px'
+		});
+
+		self.save();
+		setTimeout(function() {
+			$('body').removeClass('animateWindows');
+		}, 1200);
+	}
+
+	this.tileWindows = function(win, e) {		
+		if (!e.ctrlKey && window.location.hash !== '#dekel') { 
+			return self.enlargeWindow(win);
+		}
 		
+		// TODO: make this less gross & more flexible:		
+
 		var windows = $('.window');
 		if (windows.length === 0) return;
 		var main = $('main');
