@@ -9,8 +9,12 @@ module.exports = function fetchUpdates(vm, analytics) {
 		vm.streams().forEach(function(vmStream) {
 			var serverStream = data.streams[vmStream.name()];
 			if (serverStream) {
+				const srcChanged = vmStream.src() !== serverStream.src;
 				vmStream.type(serverStream.type).src(serverStream.src).isServerStream(true);
 				delete data.streams[vmStream.name()];
+				if (srcChanged && vmStream.window()) {
+					vm.reloadWindow( vmStream.window() );
+				}
 			}
 		});
 
