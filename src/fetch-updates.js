@@ -3,6 +3,9 @@ var $ = require('jquery');
 
 module.exports = function fetchUpdates(vm, analytics) {
 	var db = firebase.database().ref();
+
+	let firstFetch = true;
+
 	db.child("admin").on("value", function(snapshot) {
 		var data = snapshot.val();
 
@@ -12,7 +15,8 @@ module.exports = function fetchUpdates(vm, analytics) {
 				const srcChanged = vmStream.src() !== serverStream.src;
 				vmStream.type(serverStream.type).src(serverStream.src).isServerStream(true);
 				delete data.streams[vmStream.name()];
-				if (srcChanged && vmStream.window()) {
+
+				if (firstFetch && srcChanged && vmStream.window()) {
 					vm.reloadWindow( vmStream.window() );
 				}
 			}
@@ -28,6 +32,8 @@ module.exports = function fetchUpdates(vm, analytics) {
 			vm.streams(vm.streams().concat(newStreams));
 
 		vm.save(); // save updated streams to local storage
+
+		firstFetch = false;
 
 	}, function(error) {
 		console.log("Reading streams failed: ", error.code);
