@@ -318,7 +318,8 @@ function StreamzVM(analytics, dataVersion) {
 
 	this.tileWindows = function(win, e) {		
 		if (!e.ctrlKey && window.location.hash !== '#dekel') { 
-			return self.enlargeWindow(win);
+			//return self.enlargeWindow(win);
+			return;
 		}
 		
 		// TODO: make this less gross & more flexible:		
