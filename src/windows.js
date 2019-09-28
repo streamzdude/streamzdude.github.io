@@ -4,8 +4,8 @@ var framebustbust = require('./framebustbust');
 require('knockout-sortable'); // must edit this module and remove calls to: require("jquery-ui/sortable") and require("jquery-ui/draggable");
 
 var numPlayers = 0;
-jwplayer.key='cH3LS/5ip1cRnTAeAfHTSnww0iWLW/Vb62KpZK+nusI=';
-
+//jwplayer.key='cH3LS/5ip1cRnTAeAfHTSnww0iWLW/Vb62KpZK+nusI='; // for v6.12
+jwplayer.key="RMhqKz6IV+MbLaihIZGDs0ri2jlucVNw4oIVtd+27lw=" // for v7.12
 
 function winJwplayer(elem, stream)
 {
