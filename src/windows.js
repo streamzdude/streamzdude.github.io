@@ -83,7 +83,7 @@ ko.bindingHandlers.window = {
 		});
 
 		elem.draggable({
-			cancel: '.jw-controlbar, object, .no-drag, input,textarea,button,select,option',
+			cancel: '.jw-icon, object, .no-drag, input,textarea,button,select,option',
 			start: function() {	vm.showOverlay(true) },
 			stop: function() {
 				vm.showOverlay(false);
