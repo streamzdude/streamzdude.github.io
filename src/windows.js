@@ -139,3 +139,17 @@ $('#editStreamDlg').dialog({
 	autoOpen: false,
 	width: 400
 });
+
+$(document).keypress(function(e) {
+	var num = e.which - 48;
+	if (num < 1 || num > 9) return;
+
+	var win = $('.window').sort((a,b) => $(a).offset().left - $(b).offset().left).eq(num - 1);
+	if (!win.length) return;
+
+	var jwpDiv = win.find('.jwplayer');
+	if (!jwpDiv.length) return;
+
+	var jwp = jwplayer(jwpDiv);
+	jwp.setMute(!jwp.getMute());
+})
