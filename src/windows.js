@@ -150,6 +150,6 @@ $(document).keypress(function(e) {
 	var jwpDiv = win.find('.jwplayer');
 	if (!jwpDiv.length) return;
 
-	var jwp = jwplayer(jwpDiv);
+	var jwp = jwplayer(jwpDiv[0]);
 	jwp.setMute(!jwp.getMute());
 })
