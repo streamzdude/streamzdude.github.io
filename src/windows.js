@@ -141,15 +141,22 @@ $('#editStreamDlg').dialog({
 });
 
 $(document).keypress(function(e) {
+	var muteAll = e.which === 96; /* back-tick ` */
 	var num = e.which - 48;
-	if (num < 1 || num > 9) return;
+	if (!muteAll && (num < 1 || num > 9)) return;
 
-	var win = $('.window').sort((a,b) => $(a).offset().left - $(b).offset().left).eq(num - 1);
+	var win = $('.window');
 	if (!win.length) return;
 
-	var jwpDiv = win.find('.jwplayer');
-	if (!jwpDiv.length) return;
+	if (!muteAll) {
+		win = win.sort((a,b) => $(a).offset().left - $(b).offset().left).eq(num - 1);
+	}
 
-	var jwp = jwplayer(jwpDiv[0]);
-	jwp.setMute(!jwp.getMute());
+	var jwpDivs = win.find('.jwplayer');
+	if (!jwpDivs.length) return;
+
+	jwpDivs.each(function() {
+		var jwp = jwplayer(this);
+		jwp.setMute(muteAll ? false : !jwp.getMute());
+	});
 })
