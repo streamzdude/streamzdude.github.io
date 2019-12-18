@@ -145,7 +145,8 @@ $(document).keypress(function(e) {
 	var num = e.which - 48;
 	if (!muteAll && (num < 1 || num > 9)) return;
 
-	var win = $('.window').sort((a,b) => $(a).offset().left - $(b).offset().left).eq(num - 1);
+	var win = $('.window').sort((a,b) => $(a).offset().left - $(b).offset().left);
+	if (!muteAll) { win = win.eq(num - 1); }
 	if (!win.length) return;
 
 	var jwpDivs = win.find('.jwplayer');
