@@ -145,18 +145,14 @@ $(document).keypress(function(e) {
 	var num = e.which - 48;
 	if (!muteAll && (num < 1 || num > 9)) return;
 
-	var win = $('.window');
+	var win = $('.window').sort((a,b) => $(a).offset().left - $(b).offset().left).eq(num - 1);
 	if (!win.length) return;
-
-	if (!muteAll) {
-		win = win.sort((a,b) => $(a).offset().left - $(b).offset().left).eq(num - 1);
-	}
 
 	var jwpDivs = win.find('.jwplayer');
 	if (!jwpDivs.length) return;
 
 	jwpDivs.each(function() {
 		var jwp = jwplayer(this);
-		jwp.setMute(muteAll ? false : !jwp.getMute());
+		jwp.setMute(muteAll ? true : !jwp.getMute());
 	});
 })
