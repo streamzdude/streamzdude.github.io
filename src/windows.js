@@ -155,6 +155,6 @@ $(document).keypress(function(e) {
 		var jwp = jwplayer(this);
 		var wasMuted = jwp.getMute();
 		var isSelectedWin = (i+1 === num);
-		jwp.setMute(muteAll ? true : isSelectedWin ? !wasMuted : false);
+		jwp.setMute(muteAll ? true : isSelectedWin ? !wasMuted : true);
 	});
 })
