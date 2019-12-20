@@ -145,15 +145,16 @@ $(document).keypress(function(e) {
 	var num = e.which - 48;
 	if (!muteAll && (num < 1 || num > 9)) return;
 
-	var win = $('.window').sort((a,b) => $(a).offset().left - $(b).offset().left);
-	if (!muteAll) { win = win.eq(num - 1); }
-	if (!win.length) return;
+	var wins = $('.window').sort((a,b) => $(a).offset().left - $(b).offset().left);
+	if (!wins.length) return;
 
-	var jwpDivs = win.find('.jwplayer');
+	var jwpDivs = wins.find('.jwplayer');
 	if (!jwpDivs.length) return;
 
-	jwpDivs.each(function() {
+	jwpDivs.each(function(i) {
 		var jwp = jwplayer(this);
-		jwp.setMute(muteAll ? true : !jwp.getMute());
+		var wasMuted = jwp.getMute();
+		var isSelectedWin = (i+1 === num);
+		jwp.setMute(muteAll ? true : isSelectedWin ? !wasMuted : false);
 	});
 })
