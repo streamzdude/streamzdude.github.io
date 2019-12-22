@@ -148,7 +148,7 @@ $(document).keypress(function(e) {
 	var wins = $('.window').sort((a,b) => $(a).offset().left - $(b).offset().left);
 	if (!wins.length) return;
 
-	var jwpDivs = wins.map(function() { return $(this).find('.jwplayer') });
+	var jwpDivs = wins.map(function() { return $(this).find('.jwplayer')[0] });
 	if (!jwpDivs.length) return;
 
 	jwpDivs.each(function(i) {
