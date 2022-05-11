@@ -87,7 +87,7 @@ header.hidden {
 }
 
 main {
-	flex: 1 1 100%;
+	flex: 1 0 100%;
 	position: relative;
 	transition: all 0.8s ease-out;
 }
